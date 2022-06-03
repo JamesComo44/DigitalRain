@@ -9,14 +9,19 @@ namespace DigitalRain.Raindrops
     class StandardRaindrop : IRaindrop
     {
         // IRaindrop
-        private char _symbol;
-
-        public char[] SymbolPool { get; set; }
-        public char Symbol { get { return _symbol; } set { _symbol = value; _isDrawingNewSymbol = true; } }
+        public char[] SymbolPool { get; private set; }
+        public char Symbol { 
+            get { return _symbol; }
+            set {
+                _symbol = value; 
+                _isDrawingNewSymbol = true;
+            } 
+        }
         public int Lifespan { get { return 255; } }
         public double LifeRemaining { get; private set; }
         public static Color DefaultColor { get { return Color.GreenYellow; } }
 
+        private char _symbol;
         private readonly double _decayRate;
         private readonly Vector2 _position;
         private Color _symbolColor;
@@ -34,7 +39,6 @@ namespace DigitalRain.Raindrops
 
             _symbolColor = symbolColor;
             _symbolCenter = Vector2.Zero;
-            _isDrawingNewSymbol = true;
         }
 
         // IRaindrop
@@ -62,13 +66,6 @@ namespace DigitalRain.Raindrops
         {
             if (LifeRemaining > 0)
                 LifeRemaining -= _decayRate * gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (LifeRemaining <= 0)
-            {
-                LifeRemaining = (double)Lifespan;
-                Symbol = GetSymbolFromPool();
-                _isDrawingNewSymbol = true;
-            }
         }
 
         private Color CalculateSymbolColor()
@@ -83,11 +80,14 @@ namespace DigitalRain.Raindrops
         {
             if (_isDrawingNewSymbol)
             {
-                _symbolCenter = font.MeasureString(SymbolAsStr()) / 2;
+                Vector2 newCenter = font.MeasureString(SymbolAsStr());
+                _symbolCenter = new Vector2(newCenter.X / 2, 0);
                 _isDrawingNewSymbol = false;
             }
 
             spriteBatch.DrawString(font, SymbolAsStr(), _position, CalculateSymbolColor(), 0f, _symbolCenter, 1.0f, SpriteEffects.None, 0.5f);
+
+            // DEBUG
             spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 0), Color.White);
         }
     }

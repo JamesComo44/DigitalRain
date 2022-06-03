@@ -8,7 +8,7 @@ namespace DigitalRain.Raindrops
 {
     interface IRaindrop
     {
-        char[] SymbolPool { get; set; }
+        char[] SymbolPool { get; }
         char Symbol { get; }
         int Lifespan { get; }
         double LifeRemaining { get; }

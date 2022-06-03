@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace DigitalRain
 {
@@ -14,7 +15,7 @@ namespace DigitalRain
         private SpriteFont _font;
 
         //TODO: TESTING
-        StandardRaindrop raindrop;
+        List<IRaindrop> _raindrops;
 
         public DigitalRainGame()
         {
@@ -30,7 +31,17 @@ namespace DigitalRain
             _screenHeight = _graphics.PreferredBackBufferHeight;
 
             //TODO: TESTING
-            raindrop = new StandardRaindrop(0.06, new Vector2(_screenWidth / 2, _screenHeight / 2), StandardRaindrop.DefaultColor);
+            int raindropsToSpawn = 100;
+            _raindrops = new List<IRaindrop>(raindropsToSpawn);
+
+            float screenSubdivisions = _screenWidth / raindropsToSpawn;
+            for (int i = 1; i < raindropsToSpawn + 1; i++)
+            {
+                double decayRate = 0.06;
+                Vector2 initialPosition = new Vector2(i * screenSubdivisions, 0);
+                Color color = StandardRaindrop.DefaultColor;
+                _raindrops.Add(new StandardRaindrop(decayRate, initialPosition, color));
+            }
 
             base.Initialize();
         }
@@ -49,7 +60,10 @@ namespace DigitalRain
                 Exit();
 
             // TODO: Add your update logic here
-            raindrop.Update(gameTime);
+            foreach (IRaindrop raindrop in _raindrops)
+            {
+                raindrop.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -60,7 +74,11 @@ namespace DigitalRain
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            raindrop.Draw(_spriteBatch, _font);
+
+            foreach (IRaindrop raindrop in _raindrops)
+            {
+                raindrop.Draw(_spriteBatch, _font);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);
