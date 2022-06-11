@@ -8,5 +8,10 @@ namespace DigitalRain
         {
             _id = id;
         }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}({_id})";
+        }
     }
 }
