@@ -8,6 +8,9 @@ namespace DigitalRain
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private SpriteFont _spriteFont;
+        private Vector2 _helloWorldPosition;
+        private Vector2 _helloWorldShadowPosition;
 
         public DigitalRainGame()
         {
@@ -18,16 +21,14 @@ namespace DigitalRain
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            _helloWorldPosition = new Vector2(-20, -20);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            _spriteFont = Content.Load<SpriteFont>("default");
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,8 +36,13 @@ namespace DigitalRain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-
+            _helloWorldPosition = _helloWorldPosition + new Vector2(1, 1);
+            Rectangle bounds = _graphics.GraphicsDevice.Viewport.Bounds;
+            if (_helloWorldPosition.X > bounds.Width || _helloWorldPosition.Y > bounds.Height)
+            {
+                _helloWorldPosition = new Vector2(-20, -20);
+            }
+            _helloWorldShadowPosition = _helloWorldPosition - new Vector2(2, 2);
             base.Update(gameTime);
         }
 
@@ -44,7 +50,10 @@ namespace DigitalRain
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+            _spriteBatch.DrawString(_spriteFont, "Hello, World!", _helloWorldShadowPosition, new Color(Color.YellowGreen, 0.2f));
+            _spriteBatch.DrawString(_spriteFont, "Hello, World!", _helloWorldPosition, Color.GreenYellow);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }

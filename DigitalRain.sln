@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32510.428
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalRain", "DigitalRain.csproj", "{6737A910-DA74-48D4-AAEF-CB53E976D947}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalRain", "DigitalRain\DigitalRain.csproj", "{13A5D56B-9E65-4D2C-BFF3-97907E518694}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalRainTests", "Tests\DigitalRainTests.csproj", "{EB11EE98-793C-4F10-A37B-357FEC6CE1D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6737A910-DA74-48D4-AAEF-CB53E976D947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6737A910-DA74-48D4-AAEF-CB53E976D947}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6737A910-DA74-48D4-AAEF-CB53E976D947}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6737A910-DA74-48D4-AAEF-CB53E976D947}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13A5D56B-9E65-4D2C-BFF3-97907E518694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13A5D56B-9E65-4D2C-BFF3-97907E518694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13A5D56B-9E65-4D2C-BFF3-97907E518694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13A5D56B-9E65-4D2C-BFF3-97907E518694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB11EE98-793C-4F10-A37B-357FEC6CE1D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB11EE98-793C-4F10-A37B-357FEC6CE1D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB11EE98-793C-4F10-A37B-357FEC6CE1D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB11EE98-793C-4F10-A37B-357FEC6CE1D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
