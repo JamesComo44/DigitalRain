@@ -11,7 +11,7 @@ namespace DigitalRain
             Array.Fill(_columnPool, true);
         }
 
-        public ColumnId PickOne()
+        public int PickOne()
         {
             if (_columnPool[_nextId])
             {
@@ -19,19 +19,16 @@ namespace DigitalRain
 
                 var idToReturn = _nextId;
                 _nextId = Increment(_nextId);
-                return new ColumnId(idToReturn);
+                return idToReturn;
             }
             throw new InvalidOperationException("No unoccupied columns available in the pool");
         }
 
-        public void Restore(ISet<ColumnId> columnsToRestore)
+        public void Restore(ISet<int> columnsToRestore)
         {
-            for (int i = 0; i < _columnPool.Length; i++)
+            foreach (var columnNumber in columnsToRestore)
             {
-                if (columnsToRestore.Contains(new ColumnId(i)))
-                {
-                    _columnPool[i] = true;
-                }
+                _columnPool[columnNumber] = true;
             }
         }
 

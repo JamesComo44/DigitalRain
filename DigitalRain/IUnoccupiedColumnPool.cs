@@ -5,7 +5,8 @@ namespace DigitalRain
 {
 	public interface IUnoccupiedColumnPool
 	{
-		ColumnId PickOne();
-		void Restore(ISet<ColumnId> columnsToRestore);
+		int PickOne();
+		void Restore(ISet<int> columnsToRestore);
+		public int ColumnCount { get; }
 	}
 }
