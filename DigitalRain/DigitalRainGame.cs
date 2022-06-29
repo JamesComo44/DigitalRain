@@ -11,6 +11,8 @@ namespace DigitalRain
         private SpriteFont _spriteFont;
         private Vector2 _helloWorldPosition;
         private Vector2 _helloWorldShadowPosition;
+        private RaindropStreamFactory _streamFactory;
+        private RaindropStreams _raindropStreams;
 
         public DigitalRainGame()
         {
@@ -29,6 +31,13 @@ namespace DigitalRain
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _spriteFont = Content.Load<SpriteFont>("default");
+
+            int columnCount = 35;
+            var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount);
+            Rectangle bounds = _graphics.GraphicsDevice.Viewport.Bounds;
+            UnoccupiedColumnPool columnPool = new UnoccupiedColumnPool(columnNumberPicker, bounds.Width);
+            _streamFactory = new RaindropStreamFactory(_spriteBatch, _spriteFont, columnPool);
+            _raindropStreams = new RaindropStreams();
         }
 
         protected override void Update(GameTime gameTime)
@@ -43,6 +52,14 @@ namespace DigitalRain
                 _helloWorldPosition = new Vector2(-20, -20);
             }
             _helloWorldShadowPosition = _helloWorldPosition - new Vector2(2, 2);
+
+            var wholeSecondsElapsed = (int)(gameTime.TotalGameTime.TotalSeconds);
+            while (_raindropStreams.Count < wholeSecondsElapsed)
+            {
+                var raindropStream = _streamFactory.Create();
+                _raindropStreams.Add(raindropStream);
+            }
+            
             base.Update(gameTime);
         }
 
@@ -51,8 +68,11 @@ namespace DigitalRain
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_spriteFont, "Hello, World!", _helloWorldShadowPosition, new Color(Color.YellowGreen, 0.2f));
-            _spriteBatch.DrawString(_spriteFont, "Hello, World!", _helloWorldPosition, Color.GreenYellow);
+
+            _raindropStreams.Draw(gameTime);
+            //_spriteBatch.DrawString(_spriteFont, "Hello, World!", _helloWorldShadowPosition, new Color(Color.YellowGreen, 0.2f));
+            //_spriteBatch.DrawString(_spriteFont, "Hello, World!", _helloWorldPosition, Color.GreenYellow);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);

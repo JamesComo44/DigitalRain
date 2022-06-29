@@ -1,67 +1,8 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace DigitalRain
 {
-    public class RaindropStream
-    {
-        float _xPosition;
-        float _width;
-
-        public RaindropStream(float xPosition, float width)
-        {
-            _xPosition = xPosition;
-            _width = width;
-        }
-
-        public void Update()
-        { }
-
-        public void Draw()
-        { }
-    }
-
-    public class RaindropStreamFactory
-    {
-        private IUnoccupiedColumnPool _columnPool;
-        private float _screenWidth;
-        private float _streamSpacing;
-
-        public RaindropStreamFactory(IUnoccupiedColumnPool columnPool, int screenWidth, int streamSpacing = 0)
-        {
-            _columnPool = columnPool;
-            _screenWidth = screenWidth;
-            _streamSpacing = streamSpacing;
-        }
-
-        public RaindropStream create()
-        {
-            var columnNumber = _columnPool.PickOne();
-            var xPosition = CalculateXPosition(columnNumber);
-            return new RaindropStream(xPosition, StreamWidth);
-        }
-
-        private float ColumnWidth
-        {
-            get
-            {
-                return _screenWidth / _columnPool.ColumnCount;
-            }
-        }
-
-        private float StreamWidth
-        {
-            get
-            {
-                return ColumnWidth - _streamSpacing;
-            }
-        }
-
-        private float CalculateXPosition(int columnNumber)
-        {
-            return columnNumber * ColumnWidth;
-        }
-    }
-
     /**
      * Just a Composite class.
      */
@@ -74,7 +15,7 @@ namespace DigitalRain
             _streams = new List<RaindropStream>();
         }
 
-        public List<RaindropStream> Streams { get { return _streams; } }
+        public int Count { get { return _streams.Count; } }
 
         public void Add(RaindropStream stream)
         {
@@ -89,11 +30,11 @@ namespace DigitalRain
             }
         }
 
-        public void Draw()
+        public void Draw(GameTime gameTime)
         {
             foreach (var stream in _streams)
             {
-                stream.Draw();
+                stream.Draw(gameTime);
             }
         }
     }
