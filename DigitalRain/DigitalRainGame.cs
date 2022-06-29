@@ -28,7 +28,7 @@ namespace DigitalRain
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _spriteFont = Content.Load<SpriteFont>("default");
+            _spriteFont = Content.Load<SpriteFont>("Fonts/debug_font");
         }
 
         protected override void Update(GameTime gameTime)
