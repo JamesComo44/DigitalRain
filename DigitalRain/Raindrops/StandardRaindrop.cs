@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DigitalRain.Raindrops
 {
-    class StandardRaindrop : IRaindrop
+    class StandardRaindrop
     {
         // IRaindrop
         public char[] SymbolPool { get; private set; }
@@ -19,24 +19,26 @@ namespace DigitalRain.Raindrops
                 _isDrawingNewSymbol = true;
             }
         }
-        public int Lifespan { get { return 255; } }
         public double LifeRemaining { get; private set; }
         public static Color DefaultColor { get { return Color.GreenYellow; } }
 
+        private const int _maxColorAlpha = 255;
+        private readonly double _colorAlphaLsbWeight;
+
         private char _symbol;
-        private readonly double _decayRate;
         private readonly Vector2 _position;
         private Color _symbolColor;
         private Vector2 _symbolCenter;
         private bool _isDrawingNewSymbol;
 
-        public StandardRaindrop(double decayRate, Vector2 initialPosition, Color symbolColor)
+        public StandardRaindrop(double lifeSpan, Vector2 initialPosition, Color symbolColor)
         {
             SymbolPool = SymbolPools.EnglishAlphanumericUppercase();
             Symbol = GetSymbolFromPool();
-            LifeRemaining = (double)Lifespan;
 
-            _decayRate = decayRate;
+            _colorAlphaLsbWeight = lifeSpan / _maxColorAlpha;
+            LifeRemaining = lifeSpan;
+
             _position = initialPosition;
 
             _symbolColor = symbolColor;
@@ -67,14 +69,16 @@ namespace DigitalRain.Raindrops
         public void Update(GameTime gameTime)
         {
             if (LifeRemaining > 0)
-                LifeRemaining -= _decayRate * gameTime.ElapsedGameTime.TotalMilliseconds;
+            {
+                double updatedLife = LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds;
+                LifeRemaining = System.Math.Max(updatedLife, 0);
+                _symbolColor.A = CalculateColorAlpha(LifeRemaining);
+            }
         }
 
-        private Color CalculateSymbolColor()
+        private byte CalculateColorAlpha(double lifeRemaining)
         {
-            if (LifeRemaining >= 0)
-                _symbolColor.A = (byte)LifeRemaining;
-            return _symbolColor;
+            return (byte)(lifeRemaining / _colorAlphaLsbWeight);
         }
 
         // IRaindrop
@@ -87,10 +91,11 @@ namespace DigitalRain.Raindrops
                 _isDrawingNewSymbol = false;
             }
 
-            spriteBatch.DrawString(font, SymbolAsStr(), _position, CalculateSymbolColor(), 0f, _symbolCenter, 1.0f, SpriteEffects.None, 0.5f);
+            spriteBatch.DrawString(font, SymbolAsStr(), _position, _symbolColor, 0f, _symbolCenter, 1.0f, SpriteEffects.None, 0.5f);
 
             // DEBUG
-            spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 25), Color.White);
+            spriteBatch.DrawString(font, LifeRemaining.ToString(), new Vector2(0, 50), Color.White);
         }
     }
 }

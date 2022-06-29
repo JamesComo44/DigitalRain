@@ -15,7 +15,7 @@ namespace DigitalRain
         private SpriteFont _font;
 
         //TODO: TESTING
-        List<IRaindrop> _raindrops;
+        List<StandardRaindrop> _raindrops;
 
 
         public DigitalRainGame()
@@ -31,16 +31,16 @@ namespace DigitalRain
             _screenHeight = _graphics.PreferredBackBufferHeight;
 
             //TODO: TESTING
-            int raindropsToSpawn = 100;
-            _raindrops = new List<IRaindrop>(raindropsToSpawn);
+            int raindropsToSpawn = 50;
+            _raindrops = new List<StandardRaindrop>(raindropsToSpawn);
 
             float screenSubdivisions = _screenWidth / raindropsToSpawn;
             for (int i = 1; i < raindropsToSpawn + 1; i++)
             {
-                double decayRate = 0.06;
+                double lifeSpan = 10000.0;
                 Vector2 initialPosition = new Vector2(i * screenSubdivisions, 0);
                 Color color = StandardRaindrop.DefaultColor;
-                _raindrops.Add(new StandardRaindrop(decayRate, initialPosition, color));
+                _raindrops.Add(new StandardRaindrop(lifeSpan, initialPosition, color));
             }
 
             base.Initialize();
@@ -57,7 +57,7 @@ namespace DigitalRain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            foreach (IRaindrop raindrop in _raindrops)
+            foreach (StandardRaindrop raindrop in _raindrops)
             {
                 raindrop.Update(gameTime);
             }
@@ -71,13 +71,11 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
-            foreach (IRaindrop raindrop in _raindrops)
+            foreach (StandardRaindrop raindrop in _raindrops)
             {
                 raindrop.Draw(_spriteBatch, _font);
             }
             _spriteBatch.End();
-
-            TestSamplerState();
 
             base.Draw(gameTime);
         }
