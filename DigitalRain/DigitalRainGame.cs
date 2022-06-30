@@ -15,6 +15,7 @@ namespace DigitalRain
         private int _screenHeight;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
+        private UnoccupiedColumnPool _columnPool;
         private RaindropStreamFactory _streamFactory;
         private RaindropStreams _raindropStreams;
 
@@ -40,8 +41,8 @@ namespace DigitalRain
             _font = Content.Load<SpriteFont>("Fonts/debug_font");
 
             var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount: 50);
-            UnoccupiedColumnPool columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenWidth);
-            _streamFactory = new RaindropStreamFactory(_spriteBatch, _font, columnPool, speedInPixelsPerSecond: 80);
+            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenWidth);
+            _streamFactory = new RaindropStreamFactory(_spriteBatch, _font, _columnPool, speedInPixelsPerSecond: 80);
             _raindropStreams = new RaindropStreams();
         }
 
@@ -53,17 +54,13 @@ namespace DigitalRain
             float newRaindropStreamsPerSecond = 3;
             float secondsPerNewRaindropStream = 1 / newRaindropStreamsPerSecond;
             var numRaindropStreams = (int)(gameTime.TotalGameTime.TotalSeconds / secondsPerNewRaindropStream);
-            try
+            if (!_columnPool.IsEmpty)
             {
                 while (_raindropStreams.Count < numRaindropStreams)
                 {
                     var raindropStream = _streamFactory.Create();
                     _raindropStreams.Add(raindropStream);
                 }
-            }
-            catch (InvalidOperationException exception)
-            {
-                // ROBUST(TM)
             }
 
             _raindropStreams.Update(gameTime);

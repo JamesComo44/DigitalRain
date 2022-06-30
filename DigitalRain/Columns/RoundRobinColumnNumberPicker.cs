@@ -18,9 +18,9 @@ namespace DigitalRain.Columns
 
 		public int PickOne()
         {
-			if (!_columnNumberPool[_nextColumnNumber])
+			if (IsEmpty)
 			{
-				throw new InvalidOperationException("The next column number is not available in the RoundRobinColumnNumberPicker's pool");
+				throw new InvalidOperationException("RoundRobinColumnNumberPicker is empty!");
 			}
 
 			_columnNumberPool[_nextColumnNumber] = false;
@@ -33,6 +33,8 @@ namespace DigitalRain.Columns
         {
 			_columnNumberPool[columnNumber] = true;
 		}
+
+		public bool IsEmpty { get { return !_columnNumberPool[_nextColumnNumber]; } }
 
 		private void Increment()
 		{

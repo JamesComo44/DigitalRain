@@ -21,6 +21,8 @@ namespace DigitalRain.Columns
             get { return _columnNumberPicker.ColumnCount; }
         }
 
+        public bool IsEmpty { get { return _columnNumberPicker.IsEmpty; } }
+
         public Column PickOne()
         {
             var columnNumber = _columnNumberPicker.PickOne();
