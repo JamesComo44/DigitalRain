@@ -28,6 +28,11 @@ namespace DigitalRain.Raindrops
 
         public void Update(GameTime gameTime)
         {
+            foreach (var raindrop in _raindrops)
+            {
+                raindrop.Update(gameTime);
+            }
+
             if (_startTimeInSeconds == null)
             {
                 _startTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
