@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace DigitalRain.Columns
 {
     public class UnoccupiedColumnPool
     {
         private readonly IColumnNumberPicker _columnNumberPicker;
-        private readonly float _columnWidth;
+        private readonly Rectangle _columnDimensions;
         private Dictionary<Column, int> _columnToColumnNumber;
 
-        public UnoccupiedColumnPool(IColumnNumberPicker columnNumberPicker, float screenWidth)
+        public UnoccupiedColumnPool(IColumnNumberPicker columnNumberPicker, Rectangle screenBounds)
         {
             _columnNumberPicker = columnNumberPicker;
-            _columnWidth = screenWidth / ColumnCount;
+            _columnDimensions = new Rectangle(
+                x: 0, y: 0,  // Kinda gross, really just want a Rectangle for its `.Width` and `.Height`
+                width: screenBounds.Width / ColumnCount,
+                height: screenBounds.Height
+            );
             _columnToColumnNumber = new Dictionary<Column, int>();
         }
 
@@ -21,12 +25,16 @@ namespace DigitalRain.Columns
             get { return _columnNumberPicker.ColumnCount; }
         }
 
+        public bool IsEmpty { get { return _columnNumberPicker.IsEmpty; } }
+
         public Column PickOne()
         {
             var columnNumber = _columnNumberPicker.PickOne();
 
             var positionX = CalculatePositionX(columnNumber);
-            var column = new Column(positionX, _columnWidth);
+            var column = new Column(
+                bounds: new Rectangle(positionX, 0, _columnDimensions.Width, _columnDimensions.Height)
+            );
             _columnToColumnNumber[column] = columnNumber;
 
             return column;
@@ -41,9 +49,9 @@ namespace DigitalRain.Columns
             }
         }
 
-        private float CalculatePositionX(int columnNumber)
+        private int CalculatePositionX(int columnNumber)
         {
-            return columnNumber * _columnWidth;
+            return columnNumber * _columnDimensions.Width;
         }
     }
 }
