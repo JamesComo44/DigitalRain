@@ -5,19 +5,19 @@ namespace DigitalRain.Columns
 {
     public class Column
     {
-        private float _positionX;
+        private Rectangle _bounds;
 
-        public Column(float positionX, float width)
+        public Column(Rectangle bounds)
         {
-            _positionX = positionX;
-            Width = width;
+            _bounds = bounds;
         }
 
-        public float Width { get; private set; }
+        public float Width { get { return _bounds.Width; } }
+        public float Height { get { return _bounds.Height; } }
 
         public void DrawString(SpriteBatch spriteBatch, SpriteFont spriteFont, string str, float positionY, Color color)
         {
-            spriteBatch.DrawString(spriteFont, str, new Vector2(_positionX, positionY), color);
+            spriteBatch.DrawString(spriteFont, str, new Vector2(_bounds.X, positionY), color);
         }
     }
 }

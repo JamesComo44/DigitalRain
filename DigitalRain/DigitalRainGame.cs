@@ -45,7 +45,7 @@ namespace DigitalRain
             _font = Content.Load<SpriteFont>("Fonts/debug_font");
 
             var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount: 50);
-            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenWidth);
+            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _graphics.GraphicsDevice.Viewport.Bounds);
             _streamFactory = new RaindropStreamFactory(_spriteBatch, _font, _columnPool, speedInPixelsPerSecond: 80);
             _raindropStreams = new RaindropStreams();
         }
