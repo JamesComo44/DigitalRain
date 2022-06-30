@@ -19,5 +19,8 @@ namespace DigitalRain.Columns
         {
             spriteBatch.DrawString(spriteFont, str, new Vector2(_positionX, positionY), color);
         }
+
+        // TODO: Remove
+        public float PositionX { get { return _positionX;} }
     }
 }

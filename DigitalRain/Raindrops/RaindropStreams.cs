@@ -22,11 +22,11 @@ namespace DigitalRain.Raindrops
             _streams.Add(stream);
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             foreach (var stream in _streams)
             {
-                stream.Update();
+                stream.Update(gameTime);
             }
         }
 
