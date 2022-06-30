@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -44,7 +45,8 @@ namespace DigitalRain
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("Fonts/debug_font");
 
-            var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount: 50);
+            //var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount: 50);
+            var columnNumberPicker = new RandomColumnNumberPicker(columnCount: 50);
             _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _graphics.GraphicsDevice.Viewport.Bounds);
             _streamFactory = new RaindropStreamFactory(_spriteBatch, _font, _columnPool, speedInPixelsPerSecond: 80);
             _raindropStreams = new RaindropStreams();
@@ -55,21 +57,30 @@ namespace DigitalRain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            float newRaindropStreamsPerSecond = 3;
-            float secondsPerNewRaindropStream = 1 / newRaindropStreamsPerSecond;
-            var numRaindropStreams = (int)(gameTime.TotalGameTime.TotalSeconds / secondsPerNewRaindropStream);
-            if (!_columnPool.IsEmpty)
-            {
-                while (_raindropStreams.Count < numRaindropStreams)
-                {
-                    var raindropStream = _streamFactory.Create();
-                    _raindropStreams.Add(raindropStream);
-                }
-            }
-
+            AddNewRaindropStreams(gameTime);
+            RemoveDeadRaindropStreams();
             _raindropStreams.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        private void AddNewRaindropStreams(GameTime gameTime)
+        {
+            float newRaindropStreamsPerSecond = 3;
+            float secondsPerNewRaindropStream = 1 / newRaindropStreamsPerSecond;
+            var numRaindropStreams = (int)(gameTime.TotalGameTime.TotalSeconds / secondsPerNewRaindropStream);
+            while (!_columnPool.IsEmpty && _raindropStreams.Count < numRaindropStreams)
+            {
+                var raindropStream = _streamFactory.Create();
+                _raindropStreams.Add(raindropStream);
+            }
+        }
+
+        private void RemoveDeadRaindropStreams()
+        {
+            var deadStreams = _raindropStreams.RemoveDeadStreams();
+            var columnsToRestore = from stream in deadStreams select stream.Column;
+            _columnPool.Restore(new HashSet<Column>(columnsToRestore));
         }
 
         protected override void Draw(GameTime gameTime)

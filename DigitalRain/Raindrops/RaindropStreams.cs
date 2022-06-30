@@ -22,6 +22,21 @@ namespace DigitalRain.Raindrops
             _streams.Add(stream);
         }
 
+        public List<RaindropStream> RemoveDeadStreams()
+        {
+            var indexOfFirstLivingStream = _streams.FindIndex(
+                (RaindropStream stream) => { return !stream.IsDead; }
+            );
+
+            var deadStreams = new List<RaindropStream>();
+            if (indexOfFirstLivingStream > 0)
+            {
+                deadStreams = _streams.GetRange(0, indexOfFirstLivingStream);
+                _streams.RemoveRange(0, indexOfFirstLivingStream);
+            }
+            return deadStreams;
+        }
+
         public void Update(GameTime gameTime)
         {
             foreach (var stream in _streams)

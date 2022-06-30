@@ -8,18 +8,18 @@ namespace DigitalRain.Raindrops
 
     public class RaindropStream
     {
-        private Column _column;
         private float _width;
         private SpriteBatch _spriteBatch;
         private SpriteFont _spriteFont;
         private double? _startTimeInSeconds;
         private float _speedInPixelsPerSecond;
+        private double _unboundDistanceFallenInPixels;
         private int _raindropCount;
         List<StandardRaindrop> _raindrops;
 
         public RaindropStream(Column column, float width, SpriteBatch spriteBatch, SpriteFont spriteFont, float speedInPixelsPerSecond)
         {
-            _column = column;
+            Column = column;
             _width = width;
             _spriteBatch = spriteBatch;
             _spriteFont = spriteFont;
@@ -28,9 +28,25 @@ namespace DigitalRain.Raindrops
             _raindropCount = 0;  // This climbs forever, whereas the size of the list above shrinks as we delete things.
         }
 
+        public Column Column { get; private set;}
+
+        public bool IsDead
+        {
+            get
+            {
+                var noNewRaindrops = DistanceFallenInPixels == Column.Height && !ThereIsRoomLeftToFall;
+                var allRaindropsDeadAndRemoved = _raindrops.Count == 0;
+                return noNewRaindrops && allRaindropsDeadAndRemoved;
+            }
+        }
+
         public void Update(GameTime gameTime)
         {
-            RecordStartTime(gameTime);
+            if (_startTimeInSeconds == null)
+            {
+                _startTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
+            }
+
             Fall(gameTime);
 
             foreach (var raindrop in _raindrops)
@@ -47,29 +63,20 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        private void RecordStartTime(GameTime gameTime)
-        {
-            if (_startTimeInSeconds == null)
-            {
-                _startTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
-            }
-        }
-
         private void Fall(GameTime gameTime)
         {
+            var timeElapsedInSeconds = gameTime.TotalGameTime.TotalSeconds - _startTimeInSeconds;
+            _unboundDistanceFallenInPixels = _speedInPixelsPerSecond * (double)timeElapsedInSeconds;
             AddNewRaindrops(gameTime);
-            RemoveExpiredRaindrops();
+            RemoveDeadRaindrops();
         }
 
         private void AddNewRaindrops(GameTime gameTime)
         {
-            var timeElapsedInSeconds = gameTime.TotalGameTime.TotalSeconds - _startTimeInSeconds;
-            var distanceFallenInPixels = _speedInPixelsPerSecond * timeElapsedInSeconds;
-
-            while (ThereIsRoomLeftToFall((double)distanceFallenInPixels))
+            while (ThereIsRoomLeftToFall)
             {
                 var raindrop = new StandardRaindrop(
-                    space: new Space(_column, StreamHeight),
+                    space: new Space(Column, StreamHeight),
                     lifeSpan: 10000.0,
                     symbolColor: StandardRaindrop.DefaultColor
                 );
@@ -78,7 +85,7 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        private void RemoveExpiredRaindrops()
+        private void RemoveDeadRaindrops()
         {
             // ASSUMPTION: Raindrops at the tail of the raindrop die before raindrops at the head.
             // Even if this isn't true, they'll *eventually* be cleaned up, but performance would be sub-optimal.
@@ -86,19 +93,34 @@ namespace DigitalRain.Raindrops
             var indexOfFirstLivingRaindrop = _raindrops.FindIndex(
                 (StandardRaindrop raindrop) => { return !raindrop.IsDead(); }
             );
-            if (indexOfFirstLivingRaindrop > 0)
+
+            if (indexOfFirstLivingRaindrop == -1)
             {
-                _raindrops.RemoveRange(0, indexOfFirstLivingRaindrop);
+                indexOfFirstLivingRaindrop = _raindrops.Count; 
             }
+            _raindrops.RemoveRange(0, indexOfFirstLivingRaindrop);
         }
 
         // ASSUMPTION: Monospace font (all characters same height)
         private float CharacterHeight { get { return _spriteFont.MeasureString("A").Y; } }
         private float StreamHeight { get { return _raindropCount * CharacterHeight; } }
-        private bool ThereIsRoomLeftToFall(double distanceFallenInPixels)
+
+        private float DistanceFallenInPixels
         {
-            var nextDrawPositionY = StreamHeight + CharacterHeight;
-            return nextDrawPositionY < System.Math.Min(_column.Height, distanceFallenInPixels);
+            get
+            {
+                // Note this value is clamped to the bottom of the column.
+                return System.Math.Min(Column.Height, (float)_unboundDistanceFallenInPixels);
+            }
+        }
+
+        private bool ThereIsRoomLeftToFall
+        {
+            get
+            {
+                var nextDrawPositionY = StreamHeight + CharacterHeight;
+                return nextDrawPositionY < DistanceFallenInPixels;
+            }
         }
     }
 }
