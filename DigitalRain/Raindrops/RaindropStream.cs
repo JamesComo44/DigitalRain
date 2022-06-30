@@ -14,6 +14,7 @@ namespace DigitalRain.Raindrops
         private SpriteFont _spriteFont;
         private double? _startTimeInSeconds;
         private float _speedInPixelsPerSecond;
+        private int _raindropCount;
         List<StandardRaindrop> _raindrops;
 
         public RaindropStream(Column column, float width, SpriteBatch spriteBatch, SpriteFont spriteFont, float speedInPixelsPerSecond)
@@ -24,6 +25,7 @@ namespace DigitalRain.Raindrops
             _spriteFont = spriteFont;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _raindrops = new List<StandardRaindrop>();
+            _raindropCount = 0;  // This climbs forever, whereas the size of the list above shrinks as we delete things.
         }
 
         public void Update(GameTime gameTime)
@@ -55,6 +57,12 @@ namespace DigitalRain.Raindrops
 
         private void Fall(GameTime gameTime)
         {
+            AddNewRaindrops(gameTime);
+            RemoveExpiredRaindrops();
+        }
+
+        private void AddNewRaindrops(GameTime gameTime)
+        {
             var timeElapsedInSeconds = gameTime.TotalGameTime.TotalSeconds - _startTimeInSeconds;
             var distanceFallenInPixels = _speedInPixelsPerSecond * timeElapsedInSeconds;
 
@@ -66,13 +74,27 @@ namespace DigitalRain.Raindrops
                     symbolColor: StandardRaindrop.DefaultColor
                 );
                 _raindrops.Add(raindrop);
+                _raindropCount++;
             }
         }
 
-        private float RaindropCount { get { return _raindrops.Count; } }
+        private void RemoveExpiredRaindrops()
+        {
+            // ASSUMPTION: Raindrops at the tail of the raindrop die before raindrops at the head.
+            // Even if this isn't true, they'll *eventually* be cleaned up, but performance would be sub-optimal.
+            // I think this assumption will remain mostly true, with "glitched raindrops" being the only exception.
+            var indexOfFirstLivingRaindrop = _raindrops.FindIndex(
+                (StandardRaindrop raindrop) => { return !raindrop.IsDead(); }
+            );
+            if (indexOfFirstLivingRaindrop > 0)
+            {
+                _raindrops.RemoveRange(0, indexOfFirstLivingRaindrop);
+            }
+        }
+
         // ASSUMPTION: Monospace font (all characters same height)
         private float CharacterHeight { get { return _spriteFont.MeasureString("A").Y; } }
-        private float StreamHeight { get { return RaindropCount * CharacterHeight; } }
+        private float StreamHeight { get { return _raindropCount * CharacterHeight; } }
         private bool ThereIsRoomLeftToFall(double distanceFallenInPixels)
         {
             var nextDrawPositionY = StreamHeight + CharacterHeight;
