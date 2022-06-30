@@ -43,10 +43,12 @@ namespace DigitalRain.Raindrops
  
             while (ThereIsRoomLeftToFall((double)distanceFallenInPixels))
             {
-                double lifeSpan = 10000.0;
-                Color color = StandardRaindrop.DefaultColor;
-                var position = new Vector2(_column.PositionX, StreamHeight);
-                _raindrops.Add(new StandardRaindrop(lifeSpan, position, color));
+                var raindrop = new StandardRaindrop(
+                    space: new Space(_column, StreamHeight),
+                    lifeSpan: 10000.0,
+                    symbolColor: StandardRaindrop.DefaultColor
+                );
+                _raindrops.Add(raindrop);
             }
         }
 

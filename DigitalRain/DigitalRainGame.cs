@@ -28,10 +28,14 @@ namespace DigitalRain
 
         protected override void Initialize()
         {
-            // QUESTION: What's wrong with this method?
-            //Rectangle bounds = _graphics.GraphicsDevice.Viewport.Bounds;
-            _screenWidth = _graphics.PreferredBackBufferWidth;
-            _screenHeight = _graphics.PreferredBackBufferHeight;
+            Rectangle bounds = _graphics.GraphicsDevice.Viewport.Bounds;
+            _screenWidth = bounds.Width;
+            _screenHeight = bounds.Height;
+
+            // QUESTION: Why did James choose this method?
+            //_screenWidth = _graphics.PreferredBackBufferWidth;
+            //_screenHeight = _graphics.PreferredBackBufferHeight;
+
             base.Initialize();
         }
 
