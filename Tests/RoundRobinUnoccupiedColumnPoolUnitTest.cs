@@ -12,9 +12,8 @@ namespace DigitalRainTests
         public void PickOne_ReturnsColumnsInSequence()
         {
             var pool = new RoundRobinUnoccupiedColumnPool(columnCount: 10);
-            for (int i = 0; i < 10; i++)
+            for (int expectedId = 0; expectedId < 10; expectedId++)
             {
-                var expectedId = new ColumnId(i);
                 var actualId = pool.PickOne();
                 Assert.AreEqual(actualId, expectedId);
             }
@@ -36,7 +35,7 @@ namespace DigitalRainTests
             pool.Restore(columns);
 
             var nextColumn = pool.PickOne();
-            Assert.AreEqual(nextColumn, new ColumnId(5));
+            Assert.AreEqual(nextColumn, 5);
         }
 
         [TestMethod]
@@ -47,17 +46,17 @@ namespace DigitalRainTests
             pool.Restore(columns);
 
             var nextColumn = pool.PickOne();
-            Assert.AreEqual(nextColumn, new ColumnId(0));
+            Assert.AreEqual(nextColumn, 0);
         }
 
-        private static HashSet<ColumnId> PickAll(RoundRobinUnoccupiedColumnPool pool)
+        private static HashSet<int> PickAll(RoundRobinUnoccupiedColumnPool pool)
         {
             return PickSome(pool, pool.ColumnCount);
         }
 
-        private static HashSet<ColumnId> PickSome(RoundRobinUnoccupiedColumnPool pool, int numberToPick)
+        private static HashSet<int> PickSome(RoundRobinUnoccupiedColumnPool pool, int numberToPick)
         {
-            var columns = new HashSet<ColumnId>();
+            var columns = new HashSet<int>();
             for (int i = 0; i < numberToPick; i++)
             {
                 var id = pool.PickOne();

@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace DigitalRain
 {
+    using Columns;
+    using Raindrops;
+
     public class DigitalRainGame : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -13,6 +16,8 @@ namespace DigitalRain
         private int _screenHeight;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
+        private RaindropStreamFactory _streamFactory;
+        private RaindropStreams _raindropStreams;
 
         //TODO: TESTING
         List<StandardRaindrop> _raindrops;
@@ -50,6 +55,13 @@ namespace DigitalRain
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("Fonts/debug_font");
+
+            int columnCount = 35;
+            var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount);
+            Rectangle bounds = _graphics.GraphicsDevice.Viewport.Bounds;
+            UnoccupiedColumnPool columnPool = new UnoccupiedColumnPool(columnNumberPicker, bounds.Width);
+            _streamFactory = new RaindropStreamFactory(_spriteBatch, _font, columnPool);
+            _raindropStreams = new RaindropStreams();
         }
 
         protected override void Update(GameTime gameTime)
@@ -60,6 +72,13 @@ namespace DigitalRain
             foreach (StandardRaindrop raindrop in _raindrops)
             {
                 raindrop.Update(gameTime);
+            }
+
+            var wholeSecondsElapsed = (int)(gameTime.TotalGameTime.TotalSeconds);
+            while (_raindropStreams.Count < wholeSecondsElapsed)
+            {
+                var raindropStream = _streamFactory.Create();
+                _raindropStreams.Add(raindropStream);
             }
 
             base.Update(gameTime);
@@ -75,6 +94,9 @@ namespace DigitalRain
             {
                 raindrop.Draw(_spriteBatch, _font);
             }
+
+            _raindropStreams.Draw(gameTime);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
