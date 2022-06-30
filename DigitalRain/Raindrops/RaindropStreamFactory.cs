@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace DigitalRain
+namespace DigitalRain.Raindrops
 {
+    using Columns;
+
     public class RaindropStreamFactory
     {
         private SpriteBatch _spriteBatch;

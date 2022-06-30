@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DigitalRain
+namespace DigitalRain.Raindrops
 {
+    using Columns;
+
     public class RaindropStream
     {
         Column _column;

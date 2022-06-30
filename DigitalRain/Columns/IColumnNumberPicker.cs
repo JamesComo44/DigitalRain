@@ -1,5 +1,5 @@
 ﻿
-namespace DigitalRain
+namespace DigitalRain.Columns
 {
 	public interface IColumnNumberPicker
 	{

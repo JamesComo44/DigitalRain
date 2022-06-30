@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace DigitalRain
 {
+    using Columns;
+    using Raindrops;
+
     public class DigitalRainGame : Game
     {
         private GraphicsDeviceManager _graphics;

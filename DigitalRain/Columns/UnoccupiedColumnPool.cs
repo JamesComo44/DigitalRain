@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DigitalRain
+namespace DigitalRain.Columns
 {
     public class UnoccupiedColumnPool
     {
@@ -25,8 +25,8 @@ namespace DigitalRain
         {
             var columnNumber = _columnNumberPicker.PickOne();
 
-            var xPosition = CalculateXPosition(columnNumber);
-            var column = new Column(xPosition, _columnWidth);
+            var positionX = CalculatePositionX(columnNumber);
+            var column = new Column(positionX, _columnWidth);
             _columnToColumnNumber[column] = columnNumber;
 
             return column;
@@ -41,7 +41,7 @@ namespace DigitalRain
             }
         }
 
-        private float CalculateXPosition(int columnNumber)
+        private float CalculatePositionX(int columnNumber)
         {
             return columnNumber * _columnWidth;
         }

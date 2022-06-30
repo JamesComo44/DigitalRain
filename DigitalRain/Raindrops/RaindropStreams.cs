@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace DigitalRain
+namespace DigitalRain.Raindrops
 {
     /**
      * Just a Composite class.
