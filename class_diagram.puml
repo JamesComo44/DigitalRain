@@ -1,8 +1,8 @@
 @startuml
-StreamSpawner --|> RaindropStreamPool 
+StreamSpawner --* RaindropStreamPool 
 
-UnoccupiedColumnPool <|-- RaindropStreamPool
-StandardRaindropFactory <|-- RaindropStreamPool
+RaindropStreamPool --* UnoccupiedColumnPool
+RaindropStreamPool --* StandardRaindropFactory
 
 UnoccupiedColumnPool --* IColumnNumberPicker
 IColumnNumberPicker <|-- RoundRobinColumnNumberPicker
