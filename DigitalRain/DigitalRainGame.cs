@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DigitalRain
 {
+    using Columns;
     using Raindrops;
 
     public class DigitalRainGame : Game
     {
+
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
         private SpriteBatch _spriteBatch;
@@ -18,13 +19,12 @@ namespace DigitalRain
 
         private StreamSpawner _spawner;
 
-        public DigitalRainGame()
+        public DigitalRainGame(DigitalRainConfig config)
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            var configReader = new ConfigReader();
-            _config = configReader.ReadConfig("config.json");
+            _config = config;
         }
 
         protected override void Initialize()
@@ -32,7 +32,10 @@ namespace DigitalRain
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
             var columnNumberPickerFactory = new ColumnNumberPickerFactory(_config.columnNumberPicker);
             var columnNumberPicker = columnNumberPickerFactory.Create();
-            _spawner = new StreamSpawner(_config, columnNumberPicker, _screenBounds);
+            var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
+            var raindropFactory = new StandardRaindropFactory(_config.standardRaindropFactory);
+            var streamPool = new RaindropStreamPool(_config.raindropStreamPool, columnPool, raindropFactory);
+            _spawner = new StreamSpawner(_config.streamSpawner, streamPool, _screenBounds);
 
             base.Initialize();
         }

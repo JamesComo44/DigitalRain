@@ -9,16 +9,16 @@ namespace DigitalRain.Raindrops
 
     class StreamSpawner
     {
+        private StreamSpawnerConfig _config;
         private UnoccupiedColumnPool _columnPool;
-        private RaindropStreamFactory _streamFactory;
+        private RaindropStreamPool _streamPool;
         private List<RaindropStream> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
 
-        public StreamSpawner(DigitalRainConfig config, IColumnNumberPicker columnNumberPicker, Rectangle screenBounds)
+        public StreamSpawner(StreamSpawnerConfig config, RaindropStreamPool streamPool, Rectangle screenBounds)
         {
-            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, screenBounds);
-
-            _streamFactory = new RaindropStreamFactory(_columnPool);
+            _config = config;
+            _streamPool = streamPool;
             _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
         }
@@ -35,14 +35,13 @@ namespace DigitalRain.Raindrops
 
         private void AddNewRaindropStreams(GameTime gameTime, float currentFontHeight)
         {
-            double minSecondsPerNewRaindropStream = 0.33;
             var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
-            if (timeElapsedSinceLastNewRaindropStream > minSecondsPerNewRaindropStream)
+            if (timeElapsedSinceLastNewRaindropStream > _config.minSecondsPerNewRaindropStream)
             {
-                if (!_columnPool.IsLow)
+                if (!_streamPool.IsLow)
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
-                    var raindropStream = _streamFactory.Create(currentFontHeight);
+                    var raindropStream = _streamPool.Create(currentFontHeight);
                     _raindropStreams.Add(raindropStream);
                 }
             }
@@ -50,10 +49,9 @@ namespace DigitalRain.Raindrops
 
         private void RemoveDeadRaindropStreams()
         {
-            var deadStreams = _raindropStreams.Where((stream) => stream.IsDead).ToList();
+            var deadStreams = _raindropStreams.Where((stream) => stream.IsDead).ToHashSet();
             _raindropStreams = _raindropStreams.Where((stream) => !stream.IsDead).ToList();
-            var columnsToRestore = deadStreams.Select((stream) => stream.Column).ToHashSet();
-            _columnPool.Restore(columnsToRestore);
+            _streamPool.Restore(deadStreams);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)

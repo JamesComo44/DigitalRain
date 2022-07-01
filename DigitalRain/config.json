@@ -1,7 +1,0 @@
-{
-  "columnNumberPicker": {
-    "type": "RoundRobinColumnNumberPicker",
-    "columnCount": 50,
-    "lowWaterMark": 10
-  }
-}

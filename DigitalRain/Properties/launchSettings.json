@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DigitalRain": {
+      "commandName": "Project",
+      "commandLineArgs": "--config Configs/config.json"
+    }
+  }
+}

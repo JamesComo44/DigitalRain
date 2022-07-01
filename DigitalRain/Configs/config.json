@@ -1,0 +1,18 @@
+{
+  "columnNumberPicker": {
+    "type": "RandomColumnNumberPicker",
+    "columnCount": 50,
+    "lowWaterMark": 10
+  },
+  "streamSpawner": {
+    "minSecondsPerNewRaindropStream": 0.3
+  },
+  "raindropStreamPool": {
+    "streamFallSpeedMin": 100,
+    "streamFallSpeedMax": 400
+  },
+  "standardRaindropFactory": {
+    "lifespanMin": 2800,
+    "lifespanMax": 5500
+  }
+}
