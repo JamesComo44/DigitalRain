@@ -15,6 +15,7 @@ namespace DigitalRain.Raindrops
         private UnoccupiedColumnPool _columnPool;
         private RaindropStreamFactory _streamFactory;
         private RaindropStreams _raindropStreams;
+        private double _lastRaindropStreamCreationTimeInSeconds;
 
         public StreamSpawner(Rectangle screenBounds)
         {
@@ -23,6 +24,7 @@ namespace DigitalRain.Raindrops
 
             _streamFactory = new RaindropStreamFactory(_columnPool);
             _raindropStreams = new RaindropStreams();
+            _lastRaindropStreamCreationTimeInSeconds = 0;
         }
 
         public void Update(GameTime gameTime, float currentFontHeight)
@@ -35,13 +37,16 @@ namespace DigitalRain.Raindrops
 
         private void AddNewRaindropStreams(GameTime gameTime, float currentFontHeight)
         {
-            float newRaindropStreamsPerSecond = 3;
-            float secondsPerNewRaindropStream = 1 / newRaindropStreamsPerSecond;
-            var numRaindropStreams = (int)(gameTime.TotalGameTime.TotalSeconds / secondsPerNewRaindropStream);
-            while (!_columnPool.IsEmpty && _raindropStreams.Count < numRaindropStreams)
+            double minSecondsPerNewRaindropStream = 0.33;
+            var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
+            if (timeElapsedSinceLastNewRaindropStream > minSecondsPerNewRaindropStream)
             {
-                var raindropStream = _streamFactory.Create(currentFontHeight);
-                _raindropStreams.Add(raindropStream);
+                if (!_columnPool.IsEmpty)
+                {
+                    _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
+                    var raindropStream = _streamFactory.Create(currentFontHeight);
+                    _raindropStreams.Add(raindropStream);
+                }
             }
         }
 
