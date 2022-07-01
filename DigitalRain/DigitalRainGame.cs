@@ -30,7 +30,9 @@ namespace DigitalRain
         protected override void Initialize()
         {
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
-            _spawner = new StreamSpawner(_config, _screenBounds);
+            var columnNumberPickerFactory = new ColumnNumberPickerFactory(_config.columnNumberPicker);
+            var columnNumberPicker = columnNumberPickerFactory.Create();
+            _spawner = new StreamSpawner(_config, columnNumberPicker, _screenBounds);
 
             base.Initialize();
         }

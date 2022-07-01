@@ -1,6 +1,6 @@
 {
   "columnNumberPicker": {
-    "type": "RoundRobinColumnNumberPicker",
+    "type": "RandomColumnNumberPicker",
     "columnCount": 50,
     "lowWaterMark": 10
   }

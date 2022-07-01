@@ -4,10 +4,20 @@ using System.IO;
 
 namespace DigitalRain
 {
+    public class ColumnNumberPickerConfig
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string type;
+
+        [JsonProperty(Required = Required.Always)]
+        public int columnCount;
+
+        public int lowWaterMark = 1;
+    }
+
     public class DigitalRainConfig
     {
-        public int columnCount;
-        public int columnLowWaterMark;
+        public ColumnNumberPickerConfig columnNumberPicker;
     }
 
     public class ConfigReader

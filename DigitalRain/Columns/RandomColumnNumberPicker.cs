@@ -14,7 +14,7 @@ namespace DigitalRain.Columns
 		public int ColumnCount { get { return _columnCount; } }
 		public bool IsLow { get { return _columnNumberPool.Count < _lowWaterMark; } }
 
-		public RandomColumnNumberPicker(int columnCount, int lowWaterMark = 1)
+		public RandomColumnNumberPicker(int columnCount, int lowWaterMark)
         {
 			_columnCount = columnCount;
 			_lowWaterMark = lowWaterMark;
