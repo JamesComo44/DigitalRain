@@ -1,5 +1,6 @@
 @startuml
-RaindropStreamPool <|-- StreamSpawner
+StreamSpawner --|> RaindropStreamPool 
+
 UnoccupiedColumnPool <|-- RaindropStreamPool
 StandardRaindropFactory <|-- RaindropStreamPool
 @enduml
