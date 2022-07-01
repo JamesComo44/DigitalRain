@@ -14,8 +14,9 @@ namespace DigitalRain.Raindrops
     {
         private UnoccupiedColumnPool _columnPool;
         private RaindropStreamFactory _streamFactory;
-        private RaindropStreams _raindropStreams;
+        private List<RaindropStream> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
+        private int StreamCount { get { return _raindropStreams.Count; } }
 
         public StreamSpawner(Rectangle screenBounds)
         {
@@ -23,7 +24,7 @@ namespace DigitalRain.Raindrops
             _columnPool = new UnoccupiedColumnPool(columnNumberPicker, screenBounds);
 
             _streamFactory = new RaindropStreamFactory(_columnPool);
-            _raindropStreams = new RaindropStreams();
+            _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
         }
 
@@ -31,9 +32,11 @@ namespace DigitalRain.Raindrops
         {
             AddNewRaindropStreams(gameTime, currentFontHeight);
             RemoveDeadRaindropStreams();
-            _raindropStreams.Update(gameTime);
+            foreach (var stream in _raindropStreams)
+            {
+                stream.Update(gameTime);
+            }
         }
-
 
         private void AddNewRaindropStreams(GameTime gameTime, float currentFontHeight)
         {
@@ -52,14 +55,26 @@ namespace DigitalRain.Raindrops
 
         private void RemoveDeadRaindropStreams()
         {
-            var deadStreams = _raindropStreams.RemoveDeadStreams();
+            var indexOfFirstLivingStream = _raindropStreams.FindIndex(
+                (RaindropStream stream) => { return !stream.IsDead; }
+            );
+
+            var deadStreams = new List<RaindropStream>();
+            if (indexOfFirstLivingStream > 0)
+            {
+                deadStreams = _raindropStreams.GetRange(0, indexOfFirstLivingStream);
+                _raindropStreams.RemoveRange(0, indexOfFirstLivingStream);
+            }
             var columnsToRestore = from stream in deadStreams select stream.Column;
             _columnPool.Restore(new HashSet<Column>(columnsToRestore));
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
         {
-            _raindropStreams.Draw(gameTime, spriteBatch, font);
+            foreach (var stream in _raindropStreams)
+            {
+                stream.Draw(gameTime, spriteBatch, font);
+            }
         }
     }
 }
