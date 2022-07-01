@@ -24,6 +24,7 @@ namespace DigitalRain
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _lastRaindropStreamCreationTimeInSeconds = 0;
         }
 
         protected override void Initialize()
@@ -50,7 +51,6 @@ namespace DigitalRain
 
             base.Update(gameTime);
         }
-
 
         protected override void Draw(GameTime gameTime)
         {
