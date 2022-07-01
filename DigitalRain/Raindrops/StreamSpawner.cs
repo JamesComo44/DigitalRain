@@ -15,9 +15,9 @@ namespace DigitalRain.Raindrops
         private double _lastRaindropStreamCreationTimeInSeconds;
         private int StreamCount { get { return _raindropStreams.Count; } }
 
-        public StreamSpawner(Rectangle screenBounds)
+        public StreamSpawner(DigitalRainConfig config, Rectangle screenBounds)
         {
-            var columnNumberPicker = new RandomColumnNumberPicker(columnCount: 50, lowWaterMark:10);
+            var columnNumberPicker = new RandomColumnNumberPicker(config.columnCount, config.columnLowWaterMark);
             _columnPool = new UnoccupiedColumnPool(columnNumberPicker, screenBounds);
 
             _streamFactory = new RaindropStreamFactory(_columnPool);

@@ -5,9 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DigitalRain
 {
-    using Columns;
     using Raindrops;
-    using System;
 
     public class DigitalRainGame : Game
     {
@@ -16,6 +14,7 @@ namespace DigitalRain
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
         private float _fontHeight;
+        private DigitalRainConfig _config;
 
         private StreamSpawner _spawner;
 
@@ -24,12 +23,14 @@ namespace DigitalRain
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            var configReader = new ConfigReader();
+            _config = configReader.ReadConfig("config.json");
         }
 
         protected override void Initialize()
         {
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
-            _spawner = new StreamSpawner(_screenBounds);
+            _spawner = new StreamSpawner(_config, _screenBounds);
 
             base.Initialize();
         }
