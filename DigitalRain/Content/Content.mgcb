@@ -20,3 +20,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/debug_font.spritefont
 
+#begin Fonts/source-code-pro-medium.ttf
+/copy:Fonts/source-code-pro-medium.ttf
+
