@@ -17,7 +17,7 @@ namespace DigitalRain.Raindrops
 
         public StreamSpawner(Rectangle screenBounds)
         {
-            var columnNumberPicker = new RandomColumnNumberPicker(columnCount: 50);
+            var columnNumberPicker = new RandomColumnNumberPicker(columnCount: 50, lowWaterMark:10);
             _columnPool = new UnoccupiedColumnPool(columnNumberPicker, screenBounds);
 
             _streamFactory = new RaindropStreamFactory(_columnPool);
@@ -41,7 +41,7 @@ namespace DigitalRain.Raindrops
             var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
             if (timeElapsedSinceLastNewRaindropStream > minSecondsPerNewRaindropStream)
             {
-                if (!_columnPool.IsEmpty)
+                if (!_columnPool.IsLow)
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
                     var raindropStream = _streamFactory.Create(currentFontHeight);

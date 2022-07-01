@@ -7,15 +7,18 @@ namespace DigitalRain.Columns
 	{
 		private static readonly Random _randomGen = new Random();
 
-		private int _columnCount;
+		private readonly int _columnCount;
+		private readonly int _lowWaterMark;
 		private List<int> _columnNumberPool;
 
 		public int ColumnCount { get { return _columnCount; } }
-		public bool IsEmpty { get { return _columnNumberPool.Count < 1; } }
+		public bool IsLow { get { return _columnNumberPool.Count < _lowWaterMark; } }
 
-		public RandomColumnNumberPicker(int columnCount)
+		public RandomColumnNumberPicker(int columnCount, int lowWaterMark = 1)
         {
 			_columnCount = columnCount;
+			_lowWaterMark = lowWaterMark;
+
 			_columnNumberPool = new List<int>(_columnCount);
 			for (int i = 0; i < _columnCount; i++)
             {
@@ -25,7 +28,7 @@ namespace DigitalRain.Columns
 
 		public int PickOne()
         {
-			if (IsEmpty)
+			if (IsLow)
 			{
 				throw new InvalidOperationException("RandomColumnNumberPicker is empty!");
 			}
