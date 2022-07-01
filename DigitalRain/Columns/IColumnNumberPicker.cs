@@ -6,6 +6,6 @@ namespace DigitalRain.Columns
 		int PickOne();
 		void RestoreOne(int columnNumber);
 		public int ColumnCount { get; }
-		public bool IsEmpty { get; }
+		public bool IsLow { get; }
 	}
 }
