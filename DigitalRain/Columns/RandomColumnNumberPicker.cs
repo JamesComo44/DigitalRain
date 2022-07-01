@@ -5,9 +5,10 @@ namespace DigitalRain.Columns
 {
 	public class RandomColumnNumberPicker : IColumnNumberPicker
 	{
+		private static readonly Random _randomGen = new Random();
+
 		private int _columnCount;
 		private List<int> _columnNumberPool;
-		private Random _random;
 
 		public RandomColumnNumberPicker(int columnCount)
         {
@@ -17,7 +18,6 @@ namespace DigitalRain.Columns
             {
 				_columnNumberPool.Add(i);
             }
-			_random = new Random();
 		}
 
 		public int ColumnCount { get { return _columnCount; } }
@@ -45,7 +45,7 @@ namespace DigitalRain.Columns
 
 		private int PickRandomIndex()
 		{
-			return _random.Next(_columnNumberPool.Count);
+			return _randomGen.Next(_columnNumberPool.Count);
 		}
 	}
 }

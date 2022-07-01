@@ -5,12 +5,12 @@ namespace DigitalRain.Columns
 {
     /** A space in a column.
      */
-    public class Space
+    public class ColumnSpace
     {
         private Column _column;
         private float _positionY;
 
-        public Space(Column column, float positionY)
+        public ColumnSpace(Column column, float positionY)
         {
             _column = column;
             _positionY = positionY;

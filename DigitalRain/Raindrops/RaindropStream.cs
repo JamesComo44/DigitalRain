@@ -5,9 +5,13 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DigitalRain.Raindrops
 {
     using Columns;
+    using System;
 
     public class RaindropStream
     {
+        // Static will use the same seed across all class instances.
+        private static readonly Random _randomGen = new Random();
+
         private float _width;
         private SpriteBatch _spriteBatch;
         private SpriteFont _spriteFont;
@@ -73,11 +77,17 @@ namespace DigitalRain.Raindrops
 
         private void AddNewRaindrops(GameTime gameTime)
         {
+            int lowLifeRange = 2800;
+            int highLifeRange = 5500;
+            double precision = _randomGen.NextDouble();
+
             while (ThereIsRoomLeftToFall)
             {
+                double randomLifespan = (double)_randomGen.Next(lowLifeRange, highLifeRange + 1) + precision;
+
                 var raindrop = new StandardRaindrop(
-                    space: new Space(Column, StreamHeight),
-                    lifeSpan: 10000.0,
+                    space: new ColumnSpace(Column, StreamHeight),
+                    lifeSpan: randomLifespan,
                     symbolColor: StandardRaindrop.DefaultColor
                 );
                 _raindrops.Add(raindrop);

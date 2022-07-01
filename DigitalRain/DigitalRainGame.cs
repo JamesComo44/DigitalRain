@@ -19,12 +19,14 @@ namespace DigitalRain
         private UnoccupiedColumnPool _columnPool;
         private RaindropStreamFactory _streamFactory;
         private RaindropStreams _raindropStreams;
+        private double _lastRaindropStreamCreationTimeInSeconds;
 
         public DigitalRainGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _lastRaindropStreamCreationTimeInSeconds = 0;
         }
 
         protected override void Initialize()
@@ -66,13 +68,16 @@ namespace DigitalRain
 
         private void AddNewRaindropStreams(GameTime gameTime)
         {
-            float newRaindropStreamsPerSecond = 3;
-            float secondsPerNewRaindropStream = 1 / newRaindropStreamsPerSecond;
-            var numRaindropStreams = (int)(gameTime.TotalGameTime.TotalSeconds / secondsPerNewRaindropStream);
-            while (!_columnPool.IsEmpty && _raindropStreams.Count < numRaindropStreams)
+            double minSecondsPerNewRaindropStream = 0.33;
+            var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
+            if (timeElapsedSinceLastNewRaindropStream > minSecondsPerNewRaindropStream)
             {
-                var raindropStream = _streamFactory.Create();
-                _raindropStreams.Add(raindropStream);
+                if (!_columnPool.IsEmpty)
+                {
+                    _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
+                    var raindropStream = _streamFactory.Create();
+                    _raindropStreams.Add(raindropStream);
+                }
             }
         }
 

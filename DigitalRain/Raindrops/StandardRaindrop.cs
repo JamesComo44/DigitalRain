@@ -25,14 +25,14 @@ namespace DigitalRain.Raindrops
         private const int _maxColorAlpha = 255;
         private readonly double _colorAlphaLsbWeight;
 
-        private Space _space;
+        private readonly ColumnSpace _columnSpace;
         private char _symbol;
         private Color _symbolColor;
         private Vector2 _symbolCenter;
         private bool _isDrawingNewSymbol;
-        public StandardRaindrop(Space space, double lifeSpan, Color symbolColor)
+        public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
-            _space = space;
+            _columnSpace = space;
 
             SymbolPool = SymbolPools.EnglishAlphanumericUppercase();
             Symbol = GetSymbolFromPool();
@@ -83,19 +83,12 @@ namespace DigitalRain.Raindrops
         // IRaindrop
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
-            //if (_isDrawingNewSymbol)
-            //{
-            //    Vector2 newCenter = font.MeasureString(SymbolAsStr());
-            //    _symbolCenter = new Vector2(newCenter.X / 2, 0);
-            //    _isDrawingNewSymbol = false;
-            //}
-
-            _space.DrawString(spriteBatch, font, SymbolAsStr(), _symbolColor);
+            _columnSpace.DrawString(spriteBatch, font, SymbolAsStr(), _symbolColor);
             //spriteBatch.DrawString(font, SymbolAsStr(), _position, _symbolColor, 0f, _symbolCenter, 1.0f, SpriteEffects.None, 0.5f);
 
             // DEBUG
-            spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 25), Color.White);
-            spriteBatch.DrawString(font, LifeRemaining.ToString(), new Vector2(0, 50), Color.White);
+            //spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 25), Color.White);
+            //spriteBatch.DrawString(font, LifeRemaining.ToString(), new Vector2(0, 50), Color.White);
         }
     }
 }
