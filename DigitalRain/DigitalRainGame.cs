@@ -8,6 +8,7 @@ namespace DigitalRain
 {
     using Columns;
     using Raindrops;
+    using System;
 
     public class DigitalRainGame : Game
     {
@@ -16,6 +17,7 @@ namespace DigitalRain
         private int _screenHeight;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
+        private float _fontHeight;
         private UnoccupiedColumnPool _columnPool;
         private RaindropStreamFactory _streamFactory;
         private RaindropStreams _raindropStreams;
@@ -33,9 +35,11 @@ namespace DigitalRain
             _screenWidth = bounds.Width;
             _screenHeight = bounds.Height;
 
-            // QUESTION: Why did James choose this method?
-            //_screenWidth = _graphics.PreferredBackBufferWidth;
-            //_screenHeight = _graphics.PreferredBackBufferHeight;
+            var columnNumberPicker = new RandomColumnNumberPicker(columnCount: 50);
+            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _graphics.GraphicsDevice.Viewport.Bounds);
+
+            _streamFactory = new RaindropStreamFactory(_columnPool);
+            _raindropStreams = new RaindropStreams();
 
             base.Initialize();
         }
@@ -44,12 +48,7 @@ namespace DigitalRain
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("Fonts/debug_font");
-
-            //var columnNumberPicker = new RoundRobinColumnNumberPicker(columnCount: 50);
-            var columnNumberPicker = new RandomColumnNumberPicker(columnCount: 50);
-            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _graphics.GraphicsDevice.Viewport.Bounds);
-            _streamFactory = new RaindropStreamFactory(_spriteBatch, _font, _columnPool, speedInPixelsPerSecond: 80);
-            _raindropStreams = new RaindropStreams();
+            _fontHeight = _font.MeasureString("A").Y;
         }
 
         protected override void Update(GameTime gameTime)
@@ -71,7 +70,7 @@ namespace DigitalRain
             var numRaindropStreams = (int)(gameTime.TotalGameTime.TotalSeconds / secondsPerNewRaindropStream);
             while (!_columnPool.IsEmpty && _raindropStreams.Count < numRaindropStreams)
             {
-                var raindropStream = _streamFactory.Create();
+                var raindropStream = _streamFactory.Create(_fontHeight);
                 _raindropStreams.Add(raindropStream);
             }
         }
@@ -89,7 +88,7 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
-            _raindropStreams.Draw(gameTime);
+            _raindropStreams.Draw(gameTime, _spriteBatch, _font);
 
             _spriteBatch.End();
 
@@ -97,6 +96,7 @@ namespace DigitalRain
         }
 
         //TODO: Test code don't forget to remove this!
+        // DEBUG
         private void TestSamplerState()
         {
             string text = "Hello World S A 10 893354 I l L I";

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DigitalRain.Raindrops
 {
@@ -45,11 +46,11 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
         {
             foreach (var stream in _streams)
             {
-                stream.Draw(gameTime);
+                stream.Draw(gameTime, spriteBatch, font);
             }
         }
     }

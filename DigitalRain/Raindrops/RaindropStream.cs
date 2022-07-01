@@ -13,20 +13,18 @@ namespace DigitalRain.Raindrops
         private static readonly Random _randomGen = new Random();
 
         private float _width;
-        private SpriteBatch _spriteBatch;
-        private SpriteFont _spriteFont;
+        private float _fontHeight;
         private double? _startTimeInSeconds;
         private float _speedInPixelsPerSecond;
         private double _unboundDistanceFallenInPixels;
         private int _raindropCount;
         List<StandardRaindrop> _raindrops;
 
-        public RaindropStream(Column column, float width, SpriteBatch spriteBatch, SpriteFont spriteFont, float speedInPixelsPerSecond)
+        public RaindropStream(Column column, float width, float speedInPixelsPerSecond, float fontHeight)
         {
             Column = column;
             _width = width;
-            _spriteBatch = spriteBatch;
-            _spriteFont = spriteFont;
+            _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _raindrops = new List<StandardRaindrop>();
             _raindropCount = 0;  // This climbs forever, whereas the size of the list above shrinks as we delete things.
@@ -59,11 +57,11 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
         {
             foreach (var raindrop in _raindrops)
             {
-                raindrop.Draw(_spriteBatch, _spriteFont);
+                raindrop.Draw(spriteBatch, font);
             }
         }
 
@@ -112,7 +110,7 @@ namespace DigitalRain.Raindrops
         }
 
         // ASSUMPTION: Monospace font (all characters same height)
-        private float CharacterHeight { get { return _spriteFont.MeasureString("A").Y; } }
+        private float CharacterHeight { get { return _fontHeight; } }
         private float StreamHeight { get { return _raindropCount * CharacterHeight; } }
 
         private float DistanceFallenInPixels

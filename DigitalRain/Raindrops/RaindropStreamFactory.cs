@@ -7,23 +7,18 @@ namespace DigitalRain.Raindrops
 
     public class RaindropStreamFactory
     {
-        private SpriteBatch _spriteBatch;
-        private SpriteFont _spriteFont;
         private static readonly Random _randomGen = new Random();
 
         private UnoccupiedColumnPool _columnPool;
         private float _streamSpacing;
 
-        public RaindropStreamFactory(SpriteBatch spriteBatch, SpriteFont spriteFont, UnoccupiedColumnPool columnPool, float speedInPixelsPerSecond, int streamSpacing = 0)
+        public RaindropStreamFactory(UnoccupiedColumnPool columnPool, int streamSpacing = 0)
         {
-            _spriteBatch = spriteBatch;
-            _spriteFont = spriteFont;
             _columnPool = columnPool;
-            _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _streamSpacing = streamSpacing;
         }
 
-        public RaindropStream Create()
+        public RaindropStream Create(float fontHeight)
         {
             int lowSpeed = 100;
             int highSpeed = 400;
@@ -31,7 +26,7 @@ namespace DigitalRain.Raindrops
 
             var column = _columnPool.PickOne();
 
-            return new RaindropStream(column, column.Width - _streamSpacing, speedInPixelsPerSecond);
+            return new RaindropStream(column, column.Width - _streamSpacing, speedInPixelsPerSecond, fontHeight);
         }
     }
 }

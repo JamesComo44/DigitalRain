@@ -13,11 +13,7 @@ namespace DigitalRain.Raindrops
         public char Symbol
         {
             get { return _symbol; }
-            set
-            {
-                _symbol = value;
-                _isDrawingNewSymbol = true;
-            }
+            set {_symbol = value; }
         }
         public double LifeRemaining { get; private set; }
         public static Color DefaultColor { get { return Color.GreenYellow; } }
@@ -29,7 +25,7 @@ namespace DigitalRain.Raindrops
         private char _symbol;
         private Color _symbolColor;
         private Vector2 _symbolCenter;
-        private bool _isDrawingNewSymbol;
+  
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
             _columnSpace = space;

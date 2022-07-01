@@ -10,6 +10,9 @@ namespace DigitalRain.Columns
 		private int _columnCount;
 		private List<int> _columnNumberPool;
 
+		public int ColumnCount { get { return _columnCount; } }
+		public bool IsEmpty { get { return _columnNumberPool.Count < 1; } }
+
 		public RandomColumnNumberPicker(int columnCount)
         {
 			_columnCount = columnCount;
@@ -19,8 +22,6 @@ namespace DigitalRain.Columns
 				_columnNumberPool.Add(i);
             }
 		}
-
-		public int ColumnCount { get { return _columnCount; } }
 
 		public int PickOne()
         {
@@ -40,8 +41,6 @@ namespace DigitalRain.Columns
 			// WARNING: We're trusting the user gave us a columnNumber we don't already have!
 			_columnNumberPool.Add(columnNumber);
 		}
-
-		public bool IsEmpty { get { return _columnNumberPool.Count == 0; } }
 
 		private int PickRandomIndex()
 		{
