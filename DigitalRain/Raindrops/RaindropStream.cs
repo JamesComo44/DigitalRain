@@ -77,14 +77,13 @@ namespace DigitalRain.Raindrops
 
         private void AddNewRaindrops(GameTime gameTime)
         {
-            int lowRange = 2400;
-            int highRange = 4000;
-            //double precision = _randomGen.NextDouble();
+            int lowLifeRange = 2800;
+            int highLifeRange = 5500;
+            double precision = _randomGen.NextDouble();
 
             while (ThereIsRoomLeftToFall)
             {
-                //double randomLifespan = (double)_randomGen.Next(lowRange, highRange + 1) + precision;
-                double randomLifespan = (double)_randomGen.Next(lowRange, highRange + 1);
+                double randomLifespan = (double)_randomGen.Next(lowLifeRange, highLifeRange + 1) + precision;
 
                 var raindrop = new StandardRaindrop(
                     space: new ColumnSpace(Column, StreamHeight),
