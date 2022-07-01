@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DigitalRain.Raindrops
 {
     using Columns;
-    using Raindrops;
 
     class StreamSpawner
     {
@@ -55,18 +52,10 @@ namespace DigitalRain.Raindrops
 
         private void RemoveDeadRaindropStreams()
         {
-            var indexOfFirstLivingStream = _raindropStreams.FindIndex(
-                (RaindropStream stream) => { return !stream.IsDead; }
-            );
-
-            var deadStreams = new List<RaindropStream>();
-            if (indexOfFirstLivingStream > 0)
-            {
-                deadStreams = _raindropStreams.GetRange(0, indexOfFirstLivingStream);
-                _raindropStreams.RemoveRange(0, indexOfFirstLivingStream);
-            }
-            var columnsToRestore = from stream in deadStreams select stream.Column;
-            _columnPool.Restore(new HashSet<Column>(columnsToRestore));
+            var deadStreams = _raindropStreams.Where((stream) => stream.IsDead).ToList();
+            _raindropStreams = _raindropStreams.Where((stream) => !stream.IsDead).ToList();
+            var columnsToRestore = deadStreams.Select((stream) => stream.Column).ToHashSet();
+            _columnPool.Restore(columnsToRestore);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
