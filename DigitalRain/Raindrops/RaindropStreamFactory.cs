@@ -19,7 +19,6 @@ namespace DigitalRain.Raindrops
             _spriteBatch = spriteBatch;
             _spriteFont = spriteFont;
             _columnPool = columnPool;
-            _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _streamSpacing = streamSpacing;
         }
 
@@ -31,7 +30,7 @@ namespace DigitalRain.Raindrops
 
             var column = _columnPool.PickOne();
 
-            return new RaindropStream(column, column.Width - _streamSpacing, speedInPixelsPerSecond);
+            return new RaindropStream(column, column.Width - _streamSpacing, _spriteBatch, _spriteFont, speedInPixelsPerSecond);
         }
     }
 }
