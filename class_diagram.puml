@@ -2,7 +2,7 @@
 StreamSpawner --* RaindropStreamPool 
 
 RaindropStreamPool --* UnoccupiedColumnPool
-RaindropStreamPool --* StandardRaindropFactory
+RaindropStreamPool ..* StandardRaindropFactory
 
 UnoccupiedColumnPool --* IColumnNumberPicker
 IColumnNumberPicker <|-- RoundRobinColumnNumberPicker
@@ -24,4 +24,16 @@ IColumnNumberPicker : +int ColumnCount() {get}
 IColumnNumberPicker : +bool IsLow() {get}
 
 StandardRaindropFactory : +StandardRaindrop Create()
+
+RaindropStream --* StandardRaindropFactory
+RaindropStream ..* Column
+ColumnSpace --* Column
+
+RaindropStreamPool --> RaindropStream : Creates (passes StandardRaindropFactory and Column)
+StandardRaindropFactory ..> RaindropStream : Returns StandardRaindrop
+IColumnNumberPicker ..> UnoccupiedColumnPool : Returns column number
+UnoccupiedColumnPool ..> RaindropStreamPool : Returns Column
+RaindropStreamPool ..> StreamSpawner : Returns RaindropStream
+RaindropStream --> ColumnSpace : Creates (passes Column)
+
 @enduml
