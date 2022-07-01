@@ -46,7 +46,7 @@ namespace DigitalRain.Tests.DigitalRainTests
             }
 
             // I'm testing two things here and you can't stop me!
-            Assert.AreEqual(pool.IsEmpty, true);
+            Assert.AreEqual(pool.IsLow, true);
             Assert.Throws<InvalidOperationException>(delegate { pool.PickOne(); });
         }
 
