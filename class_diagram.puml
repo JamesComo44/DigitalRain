@@ -3,4 +3,8 @@ StreamSpawner --|> RaindropStreamPool
 
 UnoccupiedColumnPool <|-- RaindropStreamPool
 StandardRaindropFactory <|-- RaindropStreamPool
+
+UnoccupiedColumnPool --* IColumnNumberPicker
+IColumnNumberPicker <|-- RoundRobinColumnNumberPicker
+IColumnNumberPicker <|-- RandomColumnNumberPicker
 @enduml
