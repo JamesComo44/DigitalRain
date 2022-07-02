@@ -27,7 +27,7 @@ namespace DigitalRain.Tests.DigitalRainTests
             Rectangle bounds = _screenBounds;
             bounds.Width = screenWidth;
 
-            var picker = new RandomColumnNumberPicker(columnCount);
+            var picker = new RandomColumnNumberPicker(columnCount, 10);
             var pool = new UnoccupiedColumnPool(picker, bounds);
 
             Column column = pool.PickOne();
@@ -35,9 +35,20 @@ namespace DigitalRain.Tests.DigitalRainTests
         }
 
         [Test]
-        public void PickOne_ThrowsException_IfAllColumnsArePicked([Range(1, 20)] int columnCount)
+        public void PickOne_ThrowsException_IfColumnCountIsLow([Range(1, 20)] int columnCount)
         {
-            var picker = new RandomColumnNumberPicker(columnCount);
+            var lowWaterCount = columnCount + 1;
+            var picker = new RandomColumnNumberPicker(columnCount, lowWaterCount);
+            var pool = new UnoccupiedColumnPool(picker, _screenBounds);
+
+            Assert.AreEqual(pool.IsLow, true);
+            Assert.Throws<InvalidOperationException>(delegate { pool.PickOne(); });
+        }
+
+        [Test]
+        public void PickOne_ThrowsException_IfAllColumnsArePicked([Range(2, 20)] int columnCount)
+        {
+            var picker = new RandomColumnNumberPicker(columnCount, 1);
             var pool = new UnoccupiedColumnPool(picker, _screenBounds);
 
             for (int i = 0; i < columnCount; i++)
@@ -45,7 +56,6 @@ namespace DigitalRain.Tests.DigitalRainTests
                 pool.PickOne();
             }
 
-            // I'm testing two things here and you can't stop me!
             Assert.AreEqual(pool.IsLow, true);
             Assert.Throws<InvalidOperationException>(delegate { pool.PickOne(); });
         }
@@ -53,7 +63,7 @@ namespace DigitalRain.Tests.DigitalRainTests
         [Test]
         public void PickOne_ThrowsException_IfZeroColumns()
         {
-            var picker = new RandomColumnNumberPicker(columnCount: 0);
+            var picker = new RandomColumnNumberPicker(columnCount: 0, 1);
             Assert.Throws<DivideByZeroException>(delegate { new UnoccupiedColumnPool(picker, _screenBounds); });
         }
     }

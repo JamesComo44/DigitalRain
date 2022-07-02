@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,29 +6,36 @@ namespace DigitalRain
 {
     using Columns;
     using Raindrops;
-    using System;
 
     public class DigitalRainGame : Game
     {
+
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
         private float _fontHeight;
+        private DigitalRainConfig _config;
 
         private StreamSpawner _spawner;
 
-        public DigitalRainGame()
+        public DigitalRainGame(DigitalRainConfig config)
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _config = config;
         }
 
         protected override void Initialize()
         {
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
-            _spawner = new StreamSpawner(_screenBounds);
+            var columnNumberPickerFactory = new ColumnNumberPickerFactory(_config.columnNumberPicker);
+            var columnNumberPicker = columnNumberPickerFactory.Create();
+            var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
+            var raindropFactory = new StandardRaindropFactory(_config.standardRaindropFactory);
+            var streamPool = new RaindropStreamPool(_config.raindropStreamPool, columnPool, raindropFactory);
+            _spawner = new StreamSpawner(_config.streamSpawner, streamPool, _screenBounds);
 
             base.Initialize();
         }
