@@ -5,7 +5,8 @@ using System;
 namespace DigitalRain.Raindrops
 {
     using Columns;
-    public class StandardRaindrop
+    using GameUtilities;
+    public class StandardRaindrop : IRaindrop, IGameObject
     {
         // IRaindrop
         public char[] SymbolPool { get; private set; }

@@ -5,8 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DigitalRain.Raindrops
 {
     using Columns;
+    using GameUtilities;
 
-    public class RaindropStream
+    public class RaindropStream: IGameObject
     {
         private StandardRaindropFactory _raindropFactory;
         private float _width;
@@ -55,7 +56,7 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             foreach (var raindrop in _raindrops)
             {

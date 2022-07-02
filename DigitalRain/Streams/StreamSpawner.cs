@@ -6,8 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DigitalRain.Raindrops
 {
     using Columns;
+    using GameUtilities;
 
-    class StreamSpawner
+    class StreamSpawner: IGameObject
     {
         private StreamSpawnerConfig _config;
         private RaindropStreamPool _streamPool;
@@ -22,9 +23,9 @@ namespace DigitalRain.Raindrops
             _lastRaindropStreamCreationTimeInSeconds = 0;
         }
 
-        public void Update(GameTime gameTime, float currentFontHeight)
+        public void Update(GameTime gameTime)
         {
-            AddNewRaindropStreams(gameTime, currentFontHeight);
+            AddNewRaindropStreams(gameTime);
             RemoveDeadRaindropStreams();
             foreach (var stream in _raindropStreams)
             {
@@ -53,11 +54,11 @@ namespace DigitalRain.Raindrops
             _streamPool.Restore(deadStreams);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             foreach (var stream in _raindropStreams)
             {
-                stream.Draw(gameTime, spriteBatch, font);
+                stream.Draw(spriteBatch, font);
             }
         }
     }
