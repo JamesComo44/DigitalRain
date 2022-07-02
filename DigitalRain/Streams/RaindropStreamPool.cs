@@ -30,7 +30,7 @@ namespace DigitalRain.Raindrops
 
             var column = _columnPool.PickOne();
 
-            return new RaindropStream(_raindropFactory, column, column.Width - _streamSpacing, speedInPixelsPerSecond, fontHeight);
+            return new RaindropStream(_raindropFactory, column, speedInPixelsPerSecond, fontHeight);
         }
 
         public bool IsLow { get { return _columnPool.IsLow; } }
