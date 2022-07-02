@@ -10,7 +10,6 @@ namespace DigitalRain.Raindrops
     class StreamSpawner
     {
         private StreamSpawnerConfig _config;
-        private UnoccupiedColumnPool _columnPool;
         private RaindropStreamPool _streamPool;
         private List<RaindropStream> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
