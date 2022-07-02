@@ -30,6 +30,5 @@ jobs:
         uses: grassedge/generate-plantuml-action@v1.5
         with:
           path: .
-          message: Rendering Class Diagram UML
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
