@@ -12,7 +12,7 @@ namespace DigitalRain.Raindrops
 
         public StandardRaindropFactory()
         {
-            _config = DigitalRainGame.config.standardRaindropFactory;
+            _config = DigitalRainGame.Config.standardRaindropFactory;
         }
 
         public StandardRaindrop Create(ColumnSpace space)

@@ -10,7 +10,7 @@ namespace DigitalRain
 
         public ColumnNumberPickerFactory()
         {
-            _config = DigitalRainGame.config.columnNumberPicker;
+            _config = DigitalRainGame.Config.columnNumberPicker;
         }
 
         public IColumnNumberPicker Create()

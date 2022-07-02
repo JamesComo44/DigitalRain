@@ -9,7 +9,8 @@ namespace DigitalRain
 
     public class DigitalRainGame : Game
     {
-        public static DigitalRainConfig config;
+        public static DigitalRainConfig Config;
+        public static DebugConfigEditor ConfigDebugEdit;
 
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
@@ -23,7 +24,8 @@ namespace DigitalRain
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            DigitalRainGame.config = config;
+            DigitalRainGame.Config = config;
+            DigitalRainGame.ConfigDebugEdit = new DebugConfigEditor();
         }
 
         protected override void Initialize()
@@ -54,6 +56,15 @@ namespace DigitalRain
 
             _spawner.Update(gameTime);
 
+            if (WasKeyPressed(Keys.D))
+                ConfigDebugEdit.ToggleActiveMode();
+            if (WasKeyPressed(Keys.Enter))
+                ConfigDebugEdit.ToggleEditingMode();
+            if (WasKeyPressed(Keys.Up))
+                ConfigDebugEdit.IncrementIndex();
+            if (WasKeyPressed(Keys.Down))
+                ConfigDebugEdit.DecrementIndex();
+
             previousKeyboardState = Keyboard.GetState();
             base.Update(gameTime);
         }
@@ -69,6 +80,7 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
             _spawner.Draw(_spriteBatch, _font);
+            ConfigDebugEdit.Draw(_spriteBatch, _font);
             _spriteBatch.End();
 
             base.Draw(gameTime);

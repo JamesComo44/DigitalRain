@@ -18,7 +18,7 @@ namespace DigitalRain.Raindrops
 
         public StreamSpawner(RaindropStreamPool streamPool)
         {
-            _config = DigitalRainGame.config.streamSpawner;
+            _config = DigitalRainGame.Config.streamSpawner;
             _streamPool = streamPool;
             _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;

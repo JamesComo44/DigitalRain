@@ -16,7 +16,7 @@ namespace DigitalRain.Raindrops
 
         public RaindropStreamPool(UnoccupiedColumnPool columnPool, StandardRaindropFactory raindropFactory)
         {
-            _config = DigitalRainGame.config.raindropStreamPool;
+            _config = DigitalRainGame.Config.raindropStreamPool;
             _raindropFactory = raindropFactory;
             _columnPool = columnPool;
         }
