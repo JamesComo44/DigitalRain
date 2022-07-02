@@ -25,7 +25,6 @@ namespace DigitalRain.Raindrops
         private char _symbol;
         private Color _symbolColor;
         private Color _startColor;
-        private double _colorLerpLsbWeight;
 
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
@@ -37,7 +36,6 @@ namespace DigitalRain.Raindrops
             _colorAlphaLsbWeight = lifeSpan / _maxColorAlpha;
             LifeRemaining = lifeSpan;
 
-            _colorLerpLsbWeight = 1 / lifeSpan;
             _symbolColor = symbolColor;
             _startColor = Color.White;
         }
