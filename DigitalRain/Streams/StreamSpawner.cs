@@ -6,25 +6,28 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DigitalRain.Raindrops
 {
     using Columns;
+    using GameUtilities;
 
-    class StreamSpawner
+    class StreamSpawner: IGameObject
     {
-        private StreamSpawnerConfig _config;
-        private RaindropStreamPool _streamPool;
+        private readonly StreamSpawnerConfig _config;
+        private readonly RaindropStreamPool _streamPool;
         private List<RaindropStream> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
+        private float _currentFontHeight;
 
-        public StreamSpawner(StreamSpawnerConfig config, RaindropStreamPool streamPool, Rectangle screenBounds)
+        public StreamSpawner(StreamSpawnerConfig config, RaindropStreamPool streamPool)
         {
             _config = config;
             _streamPool = streamPool;
             _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
+            _currentFontHeight = 0;
         }
 
-        public void Update(GameTime gameTime, float currentFontHeight)
+        public void Update(GameTime gameTime)
         {
-            AddNewRaindropStreams(gameTime, currentFontHeight);
+            AddNewRaindropStreams(gameTime);
             RemoveDeadRaindropStreams();
             foreach (var stream in _raindropStreams)
             {
@@ -32,7 +35,12 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        private void AddNewRaindropStreams(GameTime gameTime, float currentFontHeight)
+        public void SetFontHeight(float height)
+        {
+            _currentFontHeight = height;
+        }
+
+        private void AddNewRaindropStreams(GameTime gameTime)
         {
             var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
             if (timeElapsedSinceLastNewRaindropStream > _config.minSecondsPerNewRaindropStream)
@@ -40,7 +48,7 @@ namespace DigitalRain.Raindrops
                 if (!_streamPool.IsLow)
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
-                    var raindropStream = _streamPool.Create(currentFontHeight);
+                    var raindropStream = _streamPool.Create(_currentFontHeight);
                     _raindropStreams.Add(raindropStream);
                 }
             }
@@ -53,11 +61,11 @@ namespace DigitalRain.Raindrops
             _streamPool.Restore(deadStreams);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             foreach (var stream in _raindropStreams)
             {
-                stream.Draw(gameTime, spriteBatch, font);
+                stream.Draw(spriteBatch, font);
             }
         }
     }

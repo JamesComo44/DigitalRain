@@ -5,23 +5,22 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DigitalRain.Raindrops
 {
     using Columns;
+    using GameUtilities;
 
-    public class RaindropStream
+    public class RaindropStream: IGameObject
     {
-        private StandardRaindropFactory _raindropFactory;
-        private float _width;
-        private float _fontHeight;
+        private readonly StandardRaindropFactory _raindropFactory;
+        private readonly float _fontHeight;
         private double? _startTimeInSeconds;
-        private float _speedInPixelsPerSecond;
+        private readonly float _speedInPixelsPerSecond;
         private double _unboundDistanceFallenInPixels;
         private int _raindropCount;
-        List<StandardRaindrop> _raindrops;
+        readonly List<StandardRaindrop> _raindrops;
 
-        public RaindropStream(StandardRaindropFactory raindropFactory, Column column, float width, float speedInPixelsPerSecond, float fontHeight)
+        public RaindropStream(StandardRaindropFactory raindropFactory, Column column, float speedInPixelsPerSecond, float fontHeight)
         {
             _raindropFactory = raindropFactory;
             Column = column;
-            _width = width;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _raindrops = new List<StandardRaindrop>();
@@ -55,7 +54,7 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont font)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             foreach (var raindrop in _raindrops)
             {
@@ -67,11 +66,11 @@ namespace DigitalRain.Raindrops
         {
             var timeElapsedInSeconds = gameTime.TotalGameTime.TotalSeconds - _startTimeInSeconds;
             _unboundDistanceFallenInPixels = _speedInPixelsPerSecond * (double)timeElapsedInSeconds;
-            AddNewRaindrops(gameTime);
+            AddNewRaindrops();
             RemoveDeadRaindrops();
         }
 
-        private void AddNewRaindrops(GameTime gameTime)
+        private void AddNewRaindrops()
         {
             while (ThereIsRoomLeftToFall)
             {

@@ -14,7 +14,6 @@ namespace DigitalRain
         private Rectangle _screenBounds;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
-        private float _fontHeight;
         private DigitalRainConfig _config;
 
         private StreamSpawner _spawner;
@@ -35,7 +34,7 @@ namespace DigitalRain
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
             var raindropFactory = new StandardRaindropFactory(_config.standardRaindropFactory);
             var streamPool = new RaindropStreamPool(_config.raindropStreamPool, columnPool, raindropFactory);
-            _spawner = new StreamSpawner(_config.streamSpawner, streamPool, _screenBounds);
+            _spawner = new StreamSpawner(_config.streamSpawner, streamPool);
 
             base.Initialize();
         }
@@ -44,7 +43,7 @@ namespace DigitalRain
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("Fonts/debug_font");
-            _fontHeight = _font.MeasureString("A").Y;
+            _spawner.SetFontHeight(_font.MeasureString("A").Y);
         }
 
         protected override void Update(GameTime gameTime)
@@ -52,7 +51,7 @@ namespace DigitalRain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _spawner.Update(gameTime, _fontHeight);
+            _spawner.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -62,7 +61,7 @@ namespace DigitalRain
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            _spawner.Draw(gameTime, _spriteBatch, _font);
+            _spawner.Draw(_spriteBatch, _font);
             _spriteBatch.End();
 
             base.Draw(gameTime);
