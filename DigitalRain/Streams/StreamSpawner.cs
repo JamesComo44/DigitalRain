@@ -16,9 +16,9 @@ namespace DigitalRain.Raindrops
         private double _lastRaindropStreamCreationTimeInSeconds;
         private float _currentFontHeight;
 
-        public StreamSpawner(StreamSpawnerConfig config, RaindropStreamPool streamPool)
+        public StreamSpawner(RaindropStreamPool streamPool)
         {
-            _config = config;
+            _config = DigitalRainGame.config.streamSpawner;
             _streamPool = streamPool;
             _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;

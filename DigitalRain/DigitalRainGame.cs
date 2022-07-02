@@ -9,12 +9,12 @@ namespace DigitalRain
 
     public class DigitalRainGame : Game
     {
+        public static DigitalRainConfig config;
 
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
-        private DigitalRainConfig _config;
 
         private StreamSpawner _spawner;
 
@@ -23,18 +23,18 @@ namespace DigitalRain
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _config = config;
+            DigitalRainGame.config = config;
         }
 
         protected override void Initialize()
         {
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
-            var columnNumberPickerFactory = new ColumnNumberPickerFactory(_config.columnNumberPicker);
+            var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            var raindropFactory = new StandardRaindropFactory(_config.standardRaindropFactory);
-            var streamPool = new RaindropStreamPool(_config.raindropStreamPool, columnPool, raindropFactory);
-            _spawner = new StreamSpawner(_config.streamSpawner, streamPool);
+            var raindropFactory = new StandardRaindropFactory();
+            var streamPool = new RaindropStreamPool(columnPool, raindropFactory);
+            _spawner = new StreamSpawner(streamPool);
 
             base.Initialize();
         }
