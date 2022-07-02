@@ -46,6 +46,7 @@ namespace DigitalRain
             _spawner.SetFontHeight(_font.MeasureString("A").Y);
         }
 
+        KeyboardState previousKeyboardState;
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -53,7 +54,13 @@ namespace DigitalRain
 
             _spawner.Update(gameTime);
 
+            previousKeyboardState = Keyboard.GetState();
             base.Update(gameTime);
+        }
+
+        private bool WasKeyPressed(Keys key)
+        {
+            return (Keyboard.GetState().IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key));
         }
 
         protected override void Draw(GameTime gameTime)
