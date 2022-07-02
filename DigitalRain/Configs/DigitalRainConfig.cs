@@ -64,8 +64,13 @@ namespace DigitalRain
         private string _editName;
         private object _editValue;
 
-        public DebugConfigEditor()
+        private GraphicsDevice _graphicsDevice;
+        private Texture2D _backdropTexture;
+
+        public DebugConfigEditor(GraphicsDevice graphics)
         {
+            _graphicsDevice = graphics;
+
             IsActive = false;
             IsEditing = false;
 
@@ -100,6 +105,11 @@ namespace DigitalRain
         public void ToggleActiveMode()
         {
             IsActive = !IsActive;
+
+            if (IsActive)
+                LoadTextures();
+            else
+                UnloadTextures();
         }
 
         public void ToggleEditingMode()
@@ -181,6 +191,17 @@ namespace DigitalRain
             return currentConfigFields[_editIndex].GetValue(currentConfig);
         }
 
+        public void LoadTextures()
+        {
+            _backdropTexture = new Texture2D(_graphicsDevice, 1, 1);
+            _backdropTexture.SetData(new[] { Color.White });
+        }
+
+        public void UnloadTextures()
+        {
+            _backdropTexture.Dispose();
+        }
+
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             if (!IsActive)
@@ -188,14 +209,28 @@ namespace DigitalRain
 
             if (!IsEditing)
             {
-                Vector2 namePos = new Vector2(0, font.MeasureString(_currentName).Y);
-                spriteBatch.DrawString(font, "Select A Config To Edit", Vector2.Zero, Color.White);
+                string header = "Select A Config To Edit";
+                Vector2 headerSize = font.MeasureString(header);
+                Vector2 headerPos = Vector2.Zero;
+
+                Vector2 propertyNameSize = font.MeasureString(_currentName);
+                Vector2 namePos = new Vector2(0, propertyNameSize.Y);
+
+                spriteBatch.Draw(_backdropTexture, headerPos, null, Color.Blue, 0f, Vector2.Zero, headerSize, SpriteEffects.None, 0f);
+                spriteBatch.Draw(_backdropTexture, namePos, null, Color.Blue, 0f, Vector2.Zero, propertyNameSize, SpriteEffects.None, 0f);
+                
+                spriteBatch.DrawString(font, header, headerPos, Color.White);
                 spriteBatch.DrawString(font, _currentName, namePos, Color.White);
             }
 
             if (IsEditing)
             {
                 Vector2 valuePos = new Vector2(0, font.MeasureString(_editName).Y);
+
+                //TODO: Make work with edit stuff.
+                //spriteBatch.Draw(_backdropTexture, headerPos, null, Color.Blue, 0f, Vector2.Zero, headerSize, SpriteEffects.None, 0f);
+                //spriteBatch.Draw(_backdropTexture, namePos, null, Color.Blue, 0f, Vector2.Zero, propertyNameSize, SpriteEffects.None, 0f);
+
                 spriteBatch.DrawString(font, _editName, Vector2.Zero, Color.White);
                 spriteBatch.DrawString(font, _editValue.ToString(), valuePos, Color.White);
             }

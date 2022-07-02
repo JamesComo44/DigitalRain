@@ -26,12 +26,14 @@ namespace DigitalRain
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             DigitalRainGame.Config = config;
-            DigitalRainGame.ConfigDebugEdit = new DebugConfigEditor();
         }
 
         protected override void Initialize()
         {
+            DigitalRainGame.ConfigDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
+
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
+
             var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
@@ -48,6 +50,12 @@ namespace DigitalRain
             _debugFont = Content.Load<SpriteFont>("Fonts/debug");
             _raindropFont = Content.Load<SpriteFont>("Fonts/raindrop");
             _spawner.SetFontHeight(_raindropFont.MeasureString("A").Y);
+        }
+
+        protected override void UnloadContent()
+        {
+            ConfigDebugEdit.UnloadTextures();
+            base.UnloadContent();
         }
 
         KeyboardState previousKeyboardState;
