@@ -7,13 +7,12 @@ namespace DigitalRain
         [STAThread]
         static void Main(string[] args)
         {
-            var configFlagIndex = Array.FindIndex(args, (arg) => arg == "--config");
-            var configFileIndex = configFlagIndex + 1;
+            int configFlagIndex = Array.FindIndex(args, (arg) => arg == "--config");
+            int configFileIndex = configFlagIndex + 1;
             try
             {
-                var configFileName = args[configFileIndex];
-                var configReader = new ConfigReader();
-                var config = configReader.ReadConfig(configFileName);
+                string configFileName = args[configFileIndex];
+                var config = ConfigReader.FromJson(configFileName);
                 using var game = new DigitalRainGame(config);
                 game.Run();
             }

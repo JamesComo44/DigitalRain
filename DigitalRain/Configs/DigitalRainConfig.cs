@@ -44,9 +44,9 @@ namespace DigitalRain
         public StandardRaindropFactoryConfig standardRaindropFactory;
     }
 
-    public class ConfigReader
+    public static class ConfigReader
     {
-        public DigitalRainConfig ReadConfig(string filename)
+        public static DigitalRainConfig FromJson(string filename)
         {
             var json = File.ReadAllText(filename);
             var config = JsonConvert.DeserializeObject<DigitalRainConfig>(json);
