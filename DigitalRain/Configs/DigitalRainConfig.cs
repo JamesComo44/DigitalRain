@@ -83,7 +83,7 @@ namespace DigitalRain
             for (int i = 0; i < _gameConfigs.Count; i++)
             {
                 var fieldValues = _gameConfigs[i].GetType().GetFields();
-                string key = // WTF
+                //string key = // WTF
                 //_editableConfigs.Add()
             }
 

@@ -15,7 +15,8 @@ namespace DigitalRain
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _font;
+        private SpriteFont _raindropFont;
+        private SpriteFont _debugFont;
 
         private StreamSpawner _spawner;
 
@@ -44,8 +45,9 @@ namespace DigitalRain
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _font = Content.Load<SpriteFont>("Fonts/debug_font");
-            _spawner.SetFontHeight(_font.MeasureString("A").Y);
+            _debugFont = Content.Load<SpriteFont>("Fonts/debug");
+            _raindropFont = Content.Load<SpriteFont>("Fonts/raindrop");
+            _spawner.SetFontHeight(_raindropFont.MeasureString("A").Y);
         }
 
         KeyboardState previousKeyboardState;
@@ -79,8 +81,8 @@ namespace DigitalRain
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            _spawner.Draw(_spriteBatch, _font);
-            ConfigDebugEdit.Draw(_spriteBatch, _font);
+            _spawner.Draw(_spriteBatch, _raindropFont);
+            ConfigDebugEdit.Draw(_spriteBatch, _debugFont);
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -91,43 +93,43 @@ namespace DigitalRain
         private void TestSamplerState()
         {
             string text = "Hello World S A 10 893354 I l L I";
-            Vector2 textMiddlePoint = _font.MeasureString(text) / 2;
+            Vector2 textMiddlePoint = _raindropFont.MeasureString(text) / 2;
             Vector2 position = new Vector2(_screenBounds.X / 2f, _screenBounds.Y / 2.3f);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
             string draw_text = text + " PointClamp";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 2.1f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicClamp);
             draw_text = text + " AnisotropicClamp";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 2.6f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp);
             draw_text = text + " LinearClamp";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 3f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap);
             draw_text = text + " PointWrap";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 3.5f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearWrap);
             draw_text = text + " LinearWrap";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 4.5f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap);
             draw_text = text + " AnisotropicWrap";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 5.8f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
         }
     }
