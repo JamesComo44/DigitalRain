@@ -58,6 +58,7 @@ namespace DigitalRain
 
             _spawner.Update(gameTime);
 
+            // In-Game Debug Controls
             if (WasKeyPressed(Keys.D))
                 ConfigDebugEdit.ToggleActiveMode();
             if (WasKeyPressed(Keys.Enter))

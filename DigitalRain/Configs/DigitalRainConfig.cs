@@ -88,7 +88,7 @@ namespace DigitalRain
             }
 
             _currentIndex = 0;
-            _currentName = _gameConfigs[_currentIndex].ToString();
+            _currentName = GetConfigName();
         }
 
         public void ToggleActiveMode()
@@ -98,7 +98,8 @@ namespace DigitalRain
 
         public void ToggleEditingMode()
         {
-            IsEditing = !IsEditing;
+            if (IsActive)
+                IsEditing = !IsEditing;
         }
 
         public void IncrementIndex()
@@ -113,7 +114,7 @@ namespace DigitalRain
                 _currentIndex = 0;
 
             //TODO: If is editing, what then?
-            _currentName = _gameConfigs[_currentIndex].ToString();
+            _currentName = GetConfigName();
         }
 
         public void DecrementIndex()
@@ -128,7 +129,12 @@ namespace DigitalRain
                 _currentIndex = _gameConfigs.Count - 1;
 
             //TODO: If is editing, what then?
-            _currentName = _gameConfigs[_currentIndex].ToString();
+            _currentName = GetConfigName();
+        }
+
+        private string GetConfigName()
+        {
+            return _gameConfigs[_currentIndex].GetType().Name;
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
@@ -137,7 +143,11 @@ namespace DigitalRain
                 return;
 
             if (!IsEditing)
-                spriteBatch.DrawString(font, _currentName, Vector2.Zero, Color.White);
+            {
+                Vector2 namePos = new Vector2(0, font.MeasureString(_currentName).Y);
+                spriteBatch.DrawString(font, "Select A Config To Edit", Vector2.Zero, Color.White);
+                spriteBatch.DrawString(font, _currentName, namePos, Color.White);
+            }
 
             if (IsEditing)
             {
