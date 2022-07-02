@@ -23,20 +23,18 @@ namespace DigitalRain.Raindrops
         private readonly ColumnSpace _columnSpace;
         private char _symbol;
         private Color _symbolColor;
-        private Vector2 _symbolCenter;
   
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
             _columnSpace = space;
 
-            SymbolPool = SymbolPools.EnglishAlphanumericUppercase();
+            SymbolPool = SymbolPools.EnglishAlphanumericUpperSymbols();
             Symbol = GetSymbolFromPool();
 
             _colorAlphaLsbWeight = lifeSpan / _maxColorAlpha;
             LifeRemaining = lifeSpan;
 
             _symbolColor = symbolColor;
-            _symbolCenter = Vector2.Zero;
         }
 
         // IRaindrop
@@ -79,7 +77,6 @@ namespace DigitalRain.Raindrops
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             _columnSpace.DrawString(spriteBatch, font, SymbolAsStr(), _symbolColor);
-            //spriteBatch.DrawString(font, SymbolAsStr(), _position, _symbolColor, 0f, _symbolCenter, 1.0f, SpriteEffects.None, 0.5f);
 
             // DEBUG
             //spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 25), Color.White);
