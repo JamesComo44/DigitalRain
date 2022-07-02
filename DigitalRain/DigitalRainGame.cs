@@ -95,7 +95,7 @@ namespace DigitalRain
         {
             string text = "Hello World S A 10 893354 I l L I";
             Vector2 textMiddlePoint = _raindropFont.MeasureString(text) / 2;
-            Vector2 position = new Vector2(_screenBounds.X / 2f, _screenBounds.Y / 2.3f);
+            Vector2 position;
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
             string draw_text = text + " PointClamp";
