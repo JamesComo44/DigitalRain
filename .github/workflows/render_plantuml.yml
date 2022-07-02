@@ -31,3 +31,5 @@ jobs:
         with:
           path: .
           message: Rendering Class Diagram UML
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
