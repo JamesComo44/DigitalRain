@@ -10,10 +10,10 @@ namespace DigitalRain.Raindrops
     {
         private static readonly Random _randomGen = new Random();
 
-        private RaindropStreamPoolConfig _config;
-        private StandardRaindropFactory _raindropFactory;
-        private UnoccupiedColumnPool _columnPool;
-        private float _streamSpacing;
+        private readonly RaindropStreamPoolConfig _config;
+        private readonly StandardRaindropFactory _raindropFactory;
+        private readonly UnoccupiedColumnPool _columnPool;
+        private readonly float _streamSpacing;
 
         public RaindropStreamPool(RaindropStreamPoolConfig config, UnoccupiedColumnPool columnPool, StandardRaindropFactory raindropFactory, int streamSpacing = 0)
         {

@@ -10,7 +10,6 @@ namespace DigitalRain.Raindrops
     {
         char[] SymbolPool { get; }
         char Symbol { get; }
-        int Lifespan { get; }
         double LifeRemaining { get; }
         static Color DefaultColor { get; }
 

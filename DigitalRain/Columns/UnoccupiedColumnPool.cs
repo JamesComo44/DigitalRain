@@ -7,7 +7,7 @@ namespace DigitalRain.Columns
     {
         private readonly IColumnNumberPicker _columnNumberPicker;
         private readonly Rectangle _columnDimensions;
-        private Dictionary<Column, int> _columnToColumnNumber;
+        private readonly Dictionary<Column, int> _columnToColumnNumber;
 
         public UnoccupiedColumnPool(IColumnNumberPicker columnNumberPicker, Rectangle screenBounds)
         {
