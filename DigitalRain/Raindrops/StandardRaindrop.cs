@@ -24,8 +24,9 @@ namespace DigitalRain.Raindrops
         private readonly ColumnSpace _columnSpace;
         private char _symbol;
         private Color _symbolColor;
+        private Color _initialSymbolColor;
         private Color _startColor;
-        private double _colorLerpLsbWeight;
+        
 
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
@@ -37,7 +38,7 @@ namespace DigitalRain.Raindrops
             _colorAlphaLsbWeight = lifeSpan / _maxColorAlpha;
             LifeRemaining = lifeSpan;
 
-            _colorLerpLsbWeight = 1 / lifeSpan;
+            _initialSymbolColor = symbolColor;
             _symbolColor = symbolColor;
             _startColor = Color.White;
         }
@@ -80,7 +81,7 @@ namespace DigitalRain.Raindrops
         private Color CalculateColor()
         {
             float t = lerpAmount / lerpScaleFactor;
-            Color lerpColor = Color.Lerp(DefaultColor, _startColor, t);
+            Color lerpColor = Color.Lerp(_initialSymbolColor, _startColor, t);
 
             lerpColor.A = (byte)(LifeRemaining / _colorAlphaLsbWeight);
             return lerpColor;
