@@ -67,14 +67,14 @@ namespace DigitalRain
             _spawner.Update(gameTime);
 
             // In-Game Debug Controls
-            if (WasKeyPressed(Keys.D))
+            if (WasKeyPressed(Keys.OemTilde))
                 ConfigDebugEdit.ToggleActiveMode();
             if (WasKeyPressed(Keys.Enter))
                 ConfigDebugEdit.ToggleEditingMode();
             if (WasKeyPressed(Keys.Up))
-                ConfigDebugEdit.IncrementIndex();
+                ConfigDebugEdit.IncrementTargetIndex();
             if (WasKeyPressed(Keys.Down))
-                ConfigDebugEdit.DecrementIndex();
+                ConfigDebugEdit.DecrementTargetIndex();
 
             previousKeyboardState = Keyboard.GetState();
             base.Update(gameTime);

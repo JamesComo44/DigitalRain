@@ -118,7 +118,7 @@ namespace DigitalRain
                 IsEditing = !IsEditing;
         }
 
-        public void IncrementIndex()
+        public void IncrementTargetIndex()
         {
             if (!IsActive)
                 return;
@@ -138,7 +138,7 @@ namespace DigitalRain
             _editValue = GetEditValue();
         }
 
-        public void DecrementIndex()
+        public void DecrementTargetIndex()
         {
             if (!IsActive)
                 return;
@@ -199,13 +199,36 @@ namespace DigitalRain
 
         public void UnloadTextures()
         {
-            _backdropTexture.Dispose();
+            if (_backdropTexture != null)
+                _backdropTexture.Dispose();
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             if (!IsActive)
                 return;
+
+            if (IsEditing)
+            {
+                string header = "Edit Config Value";
+                Vector2 headerSize = font.MeasureString(header);
+                Vector2 headerPos = Vector2.Zero;
+
+                Vector2 editNameSize = font.MeasureString(_editName);
+                Vector2 editNamePos = new Vector2(0, font.MeasureString(header).Y);
+
+                Vector2 editValueSize = font.MeasureString(_editValue.ToString());
+                Vector2 editValuePos = new Vector2(0, editNamePos.Y + font.MeasureString(_editName).Y);
+
+                //TODO: Make work with edit stuff.
+                spriteBatch.Draw(_backdropTexture, headerPos, null, Color.Blue, 0f, Vector2.Zero, headerSize, SpriteEffects.None, 0f);
+                spriteBatch.Draw(_backdropTexture, editNamePos, null, Color.Blue, 0f, Vector2.Zero, editNameSize, SpriteEffects.None, 0f);
+                spriteBatch.Draw(_backdropTexture, editValuePos, null, Color.Blue, 0f, Vector2.Zero, editValueSize, SpriteEffects.None, 0f);
+
+                spriteBatch.DrawString(font, header, headerPos, Color.White);
+                spriteBatch.DrawString(font, _editName, editNamePos, Color.White);
+                spriteBatch.DrawString(font, _editValue.ToString(), editValuePos, Color.White);
+            }
 
             if (!IsEditing)
             {
@@ -221,18 +244,6 @@ namespace DigitalRain
                 
                 spriteBatch.DrawString(font, header, headerPos, Color.White);
                 spriteBatch.DrawString(font, _currentName, namePos, Color.White);
-            }
-
-            if (IsEditing)
-            {
-                Vector2 valuePos = new Vector2(0, font.MeasureString(_editName).Y);
-
-                //TODO: Make work with edit stuff.
-                //spriteBatch.Draw(_backdropTexture, headerPos, null, Color.Blue, 0f, Vector2.Zero, headerSize, SpriteEffects.None, 0f);
-                //spriteBatch.Draw(_backdropTexture, namePos, null, Color.Blue, 0f, Vector2.Zero, propertyNameSize, SpriteEffects.None, 0f);
-
-                spriteBatch.DrawString(font, _editName, Vector2.Zero, Color.White);
-                spriteBatch.DrawString(font, _editValue.ToString(), valuePos, Color.White);
             }
         }
     }
