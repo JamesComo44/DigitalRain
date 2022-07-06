@@ -33,7 +33,7 @@ namespace DigitalRain
         public int streamFallSpeedMax;
     }
 
-    public class StandardRaindropFactoryConfig
+    public class ColumnSpaceFactoryConfig
     {
         [JsonProperty(Required = Required.Always)]
         public int lifespanMin;
@@ -46,7 +46,7 @@ namespace DigitalRain
         public ColumnNumberPickerConfig columnNumberPicker;
         public StreamSpawnerConfig streamSpawner;
         public RaindropStreamPoolConfig raindropStreamPool;
-        public StandardRaindropFactoryConfig standardRaindropFactory;
+        public ColumnSpaceFactoryConfig columnSpaceFactory;
     }
 
     public class DebugConfigEditor

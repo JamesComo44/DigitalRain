@@ -9,7 +9,6 @@ namespace DigitalRain.Raindrops
 
     public class RaindropStream: IGameObject
     {
-        private readonly StandardRaindropFactory _raindropFactory;
         private readonly float _fontHeight;
         private double? _startTimeInSeconds;
         private readonly float _speedInPixelsPerSecond;
@@ -17,9 +16,8 @@ namespace DigitalRain.Raindrops
         private int _raindropCount;
         readonly List<StandardRaindrop> _raindrops;
 
-        public RaindropStream(StandardRaindropFactory raindropFactory, Column column, float speedInPixelsPerSecond, float fontHeight)
+        public RaindropStream(Column column, float speedInPixelsPerSecond, float fontHeight)
         {
-            _raindropFactory = raindropFactory;
             Column = column;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
@@ -74,8 +72,7 @@ namespace DigitalRain.Raindrops
         {
             while (ThereIsRoomLeftToFall)
             {
-                var raindrop = _raindropFactory.Create(
-                    space: new ColumnSpace(Column, StreamHeight));
+                var raindrop = Column.CreateRaindrop(StreamHeight);
                 _raindrops.Add(raindrop);
                 _raindropCount++;
             }

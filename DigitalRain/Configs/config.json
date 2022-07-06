@@ -11,7 +11,7 @@
     "streamFallSpeedMin": 100,
     "streamFallSpeedMax": 400
   },
-  "standardRaindropFactory": {
+  "columnSpaceFactory": {
     "lifespanMin": 2800,
     "lifespanMax": 5500
   }

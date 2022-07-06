@@ -11,13 +11,11 @@ namespace DigitalRain.Raindrops
         private static readonly Random _randomGen = new Random();
 
         private readonly RaindropStreamPoolConfig _config;
-        private readonly StandardRaindropFactory _raindropFactory;
         private readonly UnoccupiedColumnPool _columnPool;
 
-        public RaindropStreamPool(UnoccupiedColumnPool columnPool, StandardRaindropFactory raindropFactory)
+        public RaindropStreamPool(UnoccupiedColumnPool columnPool)
         {
             _config = DigitalRainGame.Config.raindropStreamPool;
-            _raindropFactory = raindropFactory;
             _columnPool = columnPool;
         }
 
@@ -28,7 +26,7 @@ namespace DigitalRain.Raindrops
 
             var column = _columnPool.PickOne();
 
-            return new RaindropStream(_raindropFactory, column, speedInPixelsPerSecond, fontHeight);
+            return new RaindropStream(column, speedInPixelsPerSecond, fontHeight);
         }
 
         public bool IsLow { get { return _columnPool.IsLow; } }

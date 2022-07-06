@@ -37,8 +37,7 @@ namespace DigitalRain
             var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            var raindropFactory = new StandardRaindropFactory();
-            var streamPool = new RaindropStreamPool(columnPool, raindropFactory);
+            var streamPool = new RaindropStreamPool(columnPool);
             _spawner = new StreamSpawner(streamPool);
 
             base.Initialize();
