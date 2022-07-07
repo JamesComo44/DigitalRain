@@ -17,9 +17,9 @@ namespace DigitalRain.Columns
         public float Width { get { return _bounds.Width; } }
         public float Height { get { return _bounds.Height; } }
 
-        public ColumnSpace CreateSpace(float positionY)
+        public ColumnSpace CreateSpace(int number, float positionY)
         {
-            return new ColumnSpace(this, positionY);
+            return new ColumnSpace(this, number, positionY);
         }
 
         public void DrawString(SpriteBatch spriteBatch, SpriteFont spriteFont, string str, float positionY, Color color)

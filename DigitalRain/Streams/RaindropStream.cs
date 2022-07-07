@@ -74,10 +74,10 @@ namespace DigitalRain.Raindrops
         {
             while (ThereIsRoomLeftToFall)
             {
-                var columnSpace = Column.CreateSpace(positionY: StreamHeight);
+                _raindropCount++;
+                var columnSpace = Column.CreateSpace(number: _raindropCount, positionY: StreamHeight);
                 var raindrop = _raindropFactory.Create(columnSpace);
                 _raindrops.Add(raindrop);
-                _raindropCount++;
             }
         }
 
