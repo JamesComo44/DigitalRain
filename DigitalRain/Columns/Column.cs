@@ -7,11 +7,13 @@ namespace DigitalRain.Columns
     {
         private Rectangle _bounds;
 
-        public Column(Rectangle bounds)
+        public Column(int number, Rectangle bounds)
         {
+            Number = number;
             _bounds = bounds;
         }
 
+        public int Number { get; private set; }
         public float Width { get { return _bounds.Width; } }
         public float Height { get { return _bounds.Height; } }
 

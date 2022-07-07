@@ -28,10 +28,14 @@ namespace DigitalRain.Raindrops
         private Color _startColor;
 
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
+            : this(space, lifeSpan, symbolColor, SymbolPools.EnglishAlphanumericUpperSymbols())
+        { }
+
+        public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor, char[] symbolPool)
         {
             _columnSpace = space;
 
-            SymbolPool = SymbolPools.EnglishAlphanumericUpperSymbols();
+            SymbolPool = symbolPool;
             Symbol = GetSymbolFromPool();
 
             _colorAlphaLsbWeight = lifeSpan / _maxColorAlpha;

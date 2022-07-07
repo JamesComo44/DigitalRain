@@ -16,6 +16,8 @@ namespace DigitalRain.Columns
             _positionY = positionY;
         }
 
+        public int ColumnNumber { get { return _column.Number; } }
+
         public void DrawString(SpriteBatch spriteBatch, SpriteFont spriteFont, string str, Color color)
         {
             _column.DrawString(spriteBatch, spriteFont, str, _positionY, color);
