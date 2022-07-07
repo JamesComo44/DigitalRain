@@ -17,24 +17,8 @@ namespace DigitalRain.Raindrops
             _config = DigitalRainGame.Config.standardRaindropFactory;
 
             _symbolPools = new Dictionary<(int, int), char[]>();
-            _symbolPools[(7, 19)] = new char[] { 'H' };
-            _symbolPools[(7, 20)] = new char[] { 'E' };
-            _symbolPools[(7, 21)] = new char[] { 'L' };
-            _symbolPools[(7, 22)] = new char[] { 'L' };
-            _symbolPools[(7, 23)] = new char[] { 'O' };
-            _symbolPools[(7, 24)] = new char[] { ' ' };
-            _symbolPools[(7, 25)] = new char[] { 'W' };
-            _symbolPools[(7, 26)] = new char[] { 'O' };
-            _symbolPools[(7, 27)] = new char[] { 'R' };
-            _symbolPools[(7, 28)] = new char[] { 'L' };
-            _symbolPools[(7, 29)] = new char[] { 'D' };
-            _symbolPools[(7, 30)] = new char[] { '!' };
-
             _lifespans = new Dictionary<(int, int), double>();
-            for (int i = 19; i < 31; i++)
-            {
-                _lifespans[(7, i)] = 120000;  // 2 mins
-            }
+            InitializeSymbolPoolsAndLifespans(rowNumber: 7, fixedText: "HELLO WORLD!", fixedLifespan: 120000); // 2 minutes
         }
 
         public IRaindrop Create(ColumnSpace space)
@@ -45,6 +29,18 @@ namespace DigitalRain.Raindrops
             return new StandardRaindrop(
                 space, lifespan, symbolColor: StandardRaindrop.DefaultColor, symbolPool
             );
+        }
+
+        private void InitializeSymbolPoolsAndLifespans(int rowNumber, string fixedText, double fixedLifespan)
+        {
+            var columnCount = 50;
+            var columnNumber = (columnCount / 2) - (fixedText.Length / 2);
+            foreach (var character in fixedText)
+            {
+                _symbolPools[(rowNumber, columnNumber)] = new char[] { character };
+                _lifespans[(rowNumber, columnNumber)] = fixedLifespan;
+                columnNumber++;
+            }
         }
 
         private double GetLifespan(ColumnSpace space)
