@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DigitalRain.GameUtilities
 {
-    interface IGameObject
+    public interface IGameObject
     {
         public void Update(GameTime gameTime);
         public void Draw(SpriteBatch spriteBatch, SpriteFont font);

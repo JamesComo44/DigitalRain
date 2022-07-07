@@ -4,13 +4,13 @@ namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class StandardRaindropFactory : IRaindropFactory
+    public class PerColumnRaindropFactory
     {
         // Static will use the same seed across all class instances.
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
 
-        public StandardRaindropFactory()
+        public PerColumnRaindropFactory()
         {
             _config = DigitalRainGame.Config.standardRaindropFactory;
         }

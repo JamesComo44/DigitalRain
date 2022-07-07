@@ -9,21 +9,21 @@ namespace DigitalRain.Raindrops
 
     public class RaindropStream: IGameObject
     {
-        private readonly StandardRaindropFactory _raindropFactory;
+        private readonly IRaindropFactory _raindropFactory;
         private readonly float _fontHeight;
         private double? _startTimeInSeconds;
         private readonly float _speedInPixelsPerSecond;
         private double _unboundDistanceFallenInPixels;
         private int _raindropCount;
-        readonly List<StandardRaindrop> _raindrops;
+        readonly List<IRaindrop> _raindrops;
 
-        public RaindropStream(StandardRaindropFactory raindropFactory, Column column, float speedInPixelsPerSecond, float fontHeight)
+        public RaindropStream(IRaindropFactory raindropFactory, Column column, float speedInPixelsPerSecond, float fontHeight)
         {
             _raindropFactory = raindropFactory;
             Column = column;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
-            _raindrops = new List<StandardRaindrop>();
+            _raindrops = new List<IRaindrop>();
             _raindropCount = 0;  // This climbs forever, whereas the size of the list above shrinks as we delete things.
         }
 
@@ -74,8 +74,8 @@ namespace DigitalRain.Raindrops
         {
             while (ThereIsRoomLeftToFall)
             {
-                var raindrop = _raindropFactory.Create(
-                    space: new ColumnSpace(Column, StreamHeight));
+                var columnSpace = Column.CreateSpace(positionY: StreamHeight);
+                var raindrop = _raindropFactory.Create(columnSpace);
                 _raindrops.Add(raindrop);
                 _raindropCount++;
             }
@@ -87,7 +87,7 @@ namespace DigitalRain.Raindrops
             // Even if this isn't true, they'll *eventually* be cleaned up, but performance would be sub-optimal.
             // I think this assumption will remain mostly true, with "glitched raindrops" being the only exception.
             var indexOfFirstLivingRaindrop = _raindrops.FindIndex(
-                (StandardRaindrop raindrop) => { return !raindrop.IsDead(); }
+                (IRaindrop raindrop) => { return !raindrop.IsDead(); }
             );
 
             if (indexOfFirstLivingRaindrop == -1)

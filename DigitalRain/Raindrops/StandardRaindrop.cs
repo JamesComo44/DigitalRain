@@ -5,8 +5,8 @@ using System;
 namespace DigitalRain.Raindrops
 {
     using Columns;
-    using GameUtilities;
-    public class StandardRaindrop : IRaindrop, IGameObject
+
+    public class StandardRaindrop : IRaindrop
     {
         // IRaindrop
         public char[] SymbolPool { get; private set; }
@@ -26,7 +26,6 @@ namespace DigitalRain.Raindrops
         private Color _symbolColor;
         private Color _initialSymbolColor;
         private Color _startColor;
-        
 
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {

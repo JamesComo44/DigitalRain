@@ -6,15 +6,10 @@ using System.Text;
 
 namespace DigitalRain.Raindrops
 {
-    interface IRaindrop
-    {
-        char[] SymbolPool { get; }
-        char Symbol { get; }
-        double LifeRemaining { get; }
-        static Color DefaultColor { get; }
+    using GameUtilities;
 
-        bool IsDead();
-        string SymbolAsStr();
-        char GetSymbolFromPool();
+    public interface IRaindrop : IGameObject
+    {
+        public bool IsDead();
     }
 }
