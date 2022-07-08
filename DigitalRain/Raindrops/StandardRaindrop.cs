@@ -20,23 +20,25 @@ namespace DigitalRain.Raindrops
         private readonly double _colorAlphaLsbWeight;
 
         private readonly ColumnSpace _columnSpace;
+        private readonly Color _startColor;
+        private readonly Color _endColor;
+        private Color _currentColor;
         private char _symbol;
-        private Color _symbolColor;
-        private Color _initialSymbolColor;
-        private Color _startColor;
+        float _lerpTimeElapsed;
 
         public StandardRaindrop(ColumnSpace space, double lifespan, Color symbolColor, char symbol)
         {
             _columnSpace = space;
 
-            Symbol = symbol;
-
             _colorAlphaLsbWeight = lifespan / _maxColorAlpha;
             LifeRemaining = lifespan;
 
-            _initialSymbolColor = symbolColor;
-            _symbolColor = symbolColor;
             _startColor = Color.White;
+            _endColor = symbolColor;
+            _currentColor = _startColor;
+            _lerpTimeElapsed = 0;
+
+            Symbol = symbol;
         }
 
         public bool IsDead()
@@ -44,33 +46,29 @@ namespace DigitalRain.Raindrops
             return LifeRemaining <= 0;
         }
 
-        float lerpScaleFactor = 350;
-        float lerpAmount = 400;
+        readonly float LerpTime = 400;
         public void Update(GameTime gameTime)
         {
-            if (LifeRemaining > 0)
-            {
-                if (lerpAmount > 0)
-                    lerpAmount -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                double updatedLife = LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds;
-                LifeRemaining = System.Math.Max(updatedLife, 0);
-                _symbolColor = CalculateColor();
+            if (!IsDead())
+            { 
+                _lerpTimeElapsed = (float)Math.Min(_lerpTimeElapsed + gameTime.ElapsedGameTime.TotalMilliseconds, LerpTime);
+                LifeRemaining = (float)Math.Max(LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds, 0);
+                _currentColor = CalculateColor();
             }
         }
 
         private Color CalculateColor()
         {
-            float t = lerpAmount / lerpScaleFactor;
-            Color lerpColor = Color.Lerp(_initialSymbolColor, _startColor, t);
+            var lerpPercentage = _lerpTimeElapsed / LerpTime;
+            Color color = Color.Lerp(_startColor, _endColor, lerpPercentage);
 
-            lerpColor.A = (byte)(LifeRemaining / _colorAlphaLsbWeight);
-            return lerpColor;
+            color.A = (byte)(LifeRemaining / _colorAlphaLsbWeight);
+            return color;
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
-            _columnSpace.DrawString(spriteBatch, font, Symbol.ToString(), _symbolColor);
+            _columnSpace.DrawString(spriteBatch, font, Symbol.ToString(), _currentColor);
         }
     }
 }
