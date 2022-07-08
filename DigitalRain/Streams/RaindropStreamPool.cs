@@ -13,14 +13,12 @@ namespace DigitalRain.Raindrops
         private readonly RaindropStreamPoolConfig _config;
         private readonly StandardRaindropFactory _raindropFactory;
         private readonly UnoccupiedColumnPool _columnPool;
-        private readonly float _streamSpacing;
 
-        public RaindropStreamPool(RaindropStreamPoolConfig config, UnoccupiedColumnPool columnPool, StandardRaindropFactory raindropFactory, int streamSpacing = 0)
+        public RaindropStreamPool(UnoccupiedColumnPool columnPool, StandardRaindropFactory raindropFactory)
         {
-            _config = config;
+            _config = DigitalRainGame.Config.raindropStreamPool;
             _raindropFactory = raindropFactory;
             _columnPool = columnPool;
-            _streamSpacing = streamSpacing;
         }
 
         public RaindropStream Create(float fontHeight)

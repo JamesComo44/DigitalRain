@@ -10,9 +10,9 @@ namespace DigitalRain.Raindrops
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
 
-        public StandardRaindropFactory(StandardRaindropFactoryConfig config)
+        public StandardRaindropFactory()
         {
-            _config = config;
+            _config = DigitalRainGame.Config.standardRaindropFactory;
         }
 
         public StandardRaindrop Create(ColumnSpace space)

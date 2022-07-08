@@ -6,24 +6,21 @@ namespace DigitalRain
 
     public class ColumnNumberPickerFactory
     {
-        private ColumnNumberPickerConfig _config;
+        private readonly ColumnNumberPickerConfig _config;
 
-        public ColumnNumberPickerFactory(ColumnNumberPickerConfig config)
+        public ColumnNumberPickerFactory()
         {
-            _config = config;
+            _config = DigitalRainGame.Config.columnNumberPicker;
         }
 
         public IColumnNumberPicker Create()
         {
-            switch (_config.type)
+            return _config.type switch
             {
-                case "RoundRobinColumnNumberPicker":
-                    return new RoundRobinColumnNumberPicker(_config.columnCount);
-                case "RandomColumnNumberPicker":
-                    return new RandomColumnNumberPicker(_config.columnCount, _config.lowWaterMark);
-                default:
-                    throw new Exception("Bad config");
-            }
+                "RoundRobinColumnNumberPicker" => new RoundRobinColumnNumberPicker(_config.columnCount),
+                "RandomColumnNumberPicker" => new RandomColumnNumberPicker(_config.columnCount, _config.lowWaterMark),
+                _ => throw new NotSupportedException("Invalid Column Number Picker Type"),
+            };
         }
     }
 }

@@ -7,15 +7,20 @@ namespace DigitalRain
         [STAThread]
         static void Main(string[] args)
         {
-            var configFlagIndex = Array.FindIndex(args, (arg) => arg == "--config");
-            var configFileIndex = configFlagIndex + 1;
+            int configFlagIndex = Array.FindIndex(args, (arg) => arg == "--config");
+            int configFileIndex = configFlagIndex + 1;
+
+            var config = LoadConfigFromJson(args[configFileIndex]);
+
+            using var game = new DigitalRainGame(config);
+            game.Run();
+        }
+
+        public static DigitalRainConfig LoadConfigFromJson(string filename)
+        {
             try
             {
-                var configFileName = args[configFileIndex];
-                var configReader = new ConfigReader();
-                var config = configReader.ReadConfig(configFileName);
-                using var game = new DigitalRainGame(config);
-                game.Run();
+                return ConfigReader.FromJson(filename);
             }
             catch (IndexOutOfRangeException)
             {

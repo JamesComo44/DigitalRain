@@ -9,12 +9,14 @@ namespace DigitalRain
 
     public class DigitalRainGame : Game
     {
+        public static DigitalRainConfig Config;
+        public static DebugConfigEditor ConfigDebugEdit;
 
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _font;
-        private DigitalRainConfig _config;
+        private SpriteFont _raindropFont;
+        private SpriteFont _debugFont;
 
         private StreamSpawner _spawner;
 
@@ -23,18 +25,21 @@ namespace DigitalRain
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _config = config;
+            DigitalRainGame.Config = config;
         }
 
         protected override void Initialize()
         {
+            DigitalRainGame.ConfigDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
+
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
-            var columnNumberPickerFactory = new ColumnNumberPickerFactory(_config.columnNumberPicker);
+
+            var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            var raindropFactory = new StandardRaindropFactory(_config.standardRaindropFactory);
-            var streamPool = new RaindropStreamPool(_config.raindropStreamPool, columnPool, raindropFactory);
-            _spawner = new StreamSpawner(_config.streamSpawner, streamPool);
+            var raindropFactory = new StandardRaindropFactory();
+            var streamPool = new RaindropStreamPool(columnPool, raindropFactory);
+            _spawner = new StreamSpawner(streamPool);
 
             base.Initialize();
         }
@@ -42,10 +47,18 @@ namespace DigitalRain
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _font = Content.Load<SpriteFont>("Fonts/debug_font");
-            _spawner.SetFontHeight(_font.MeasureString("A").Y);
+            _debugFont = Content.Load<SpriteFont>("Fonts/debug");
+            _raindropFont = Content.Load<SpriteFont>("Fonts/raindrop");
+            _spawner.SetFontHeight(_raindropFont.MeasureString("A").Y);
         }
 
+        protected override void UnloadContent()
+        {
+            ConfigDebugEdit.UnloadTextures();
+            base.UnloadContent();
+        }
+
+        KeyboardState previousKeyboardState;
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -53,7 +66,23 @@ namespace DigitalRain
 
             _spawner.Update(gameTime);
 
+            // In-Game Debug Controls
+            if (WasKeyPressed(Keys.OemTilde))
+                ConfigDebugEdit.ToggleActiveMode();
+            if (WasKeyPressed(Keys.Enter))
+                ConfigDebugEdit.ToggleEditingMode();
+            if (WasKeyPressed(Keys.Up))
+                ConfigDebugEdit.IncrementTargetIndex();
+            if (WasKeyPressed(Keys.Down))
+                ConfigDebugEdit.DecrementTargetIndex();
+
+            previousKeyboardState = Keyboard.GetState();
             base.Update(gameTime);
+        }
+
+        private bool WasKeyPressed(Keys key)
+        {
+            return (Keyboard.GetState().IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key));
         }
 
         protected override void Draw(GameTime gameTime)
@@ -61,7 +90,8 @@ namespace DigitalRain
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            _spawner.Draw(_spriteBatch, _font);
+            _spawner.Draw(_spriteBatch, _raindropFont);
+            ConfigDebugEdit.Draw(_spriteBatch, _debugFont);
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -72,43 +102,43 @@ namespace DigitalRain
         private void TestSamplerState()
         {
             string text = "Hello World S A 10 893354 I l L I";
-            Vector2 textMiddlePoint = _font.MeasureString(text) / 2;
-            Vector2 position = new Vector2(_screenBounds.X / 2f, _screenBounds.Y / 2.3f);
+            Vector2 textMiddlePoint = _raindropFont.MeasureString(text) / 2;
+            Vector2 position;
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
             string draw_text = text + " PointClamp";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 2.1f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicClamp);
             draw_text = text + " AnisotropicClamp";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 2.6f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp);
             draw_text = text + " LinearClamp";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 3f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap);
             draw_text = text + " PointWrap";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 3.5f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearWrap);
             draw_text = text + " LinearWrap";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 4.5f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap);
             draw_text = text + " AnisotropicWrap";
             position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 5.8f);
-            _spriteBatch.DrawString(_font, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
+            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
         }
     }
