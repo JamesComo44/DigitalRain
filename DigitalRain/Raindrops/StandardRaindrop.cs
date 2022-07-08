@@ -26,7 +26,6 @@ namespace DigitalRain.Raindrops
         private Color _symbolColor;
         private Color _initialSymbolColor;
         private Color _startColor;
-        
 
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
