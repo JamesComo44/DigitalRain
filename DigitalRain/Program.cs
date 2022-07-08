@@ -14,8 +14,8 @@ namespace DigitalRain
                 var configFileName = args[configFileIndex];
                 var configReader = new ConfigReader();
                 var config = configReader.ReadConfig(configFileName);
-                using (var game = new DigitalRainGame(config))
-                    game.Run();
+                using var game = new DigitalRainGame(config);
+                game.Run();
             }
             catch (IndexOutOfRangeException)
             {

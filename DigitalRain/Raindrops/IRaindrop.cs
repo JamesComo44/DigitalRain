@@ -16,8 +16,5 @@ namespace DigitalRain.Raindrops
         bool IsDead();
         string SymbolAsStr();
         char GetSymbolFromPool();
-
-        void Update(GameTime gameTime);
-        void Draw(SpriteBatch spriteBatch, SpriteFont font);
     }
 }

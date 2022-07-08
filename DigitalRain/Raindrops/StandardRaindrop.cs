@@ -24,7 +24,8 @@ namespace DigitalRain.Raindrops
         private readonly ColumnSpace _columnSpace;
         private char _symbol;
         private Color _symbolColor;
-  
+        private Color _startColor;
+
         public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
         {
             _columnSpace = space;
@@ -36,6 +37,7 @@ namespace DigitalRain.Raindrops
             LifeRemaining = lifeSpan;
 
             _symbolColor = symbolColor;
+            _startColor = Color.White;
         }
 
         // IRaindrop
@@ -58,30 +60,33 @@ namespace DigitalRain.Raindrops
             return SymbolPool[index];
         }
 
-        // IRaindrop
+        float lerpScaleFactor = 350;
+        float lerpAmount = 400;
         public void Update(GameTime gameTime)
         {
             if (LifeRemaining > 0)
             {
+                if (lerpAmount > 0)
+                    lerpAmount -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
                 double updatedLife = LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds;
                 LifeRemaining = System.Math.Max(updatedLife, 0);
-                _symbolColor.A = CalculateColorAlpha(LifeRemaining);
+                _symbolColor = CalculateColor();
             }
         }
 
-        private byte CalculateColorAlpha(double lifeRemaining)
+        private Color CalculateColor()
         {
-            return (byte)(lifeRemaining / _colorAlphaLsbWeight);
+            float t = lerpAmount / lerpScaleFactor;
+            Color lerpColor = Color.Lerp(DefaultColor, _startColor, t);
+
+            lerpColor.A = (byte)(LifeRemaining / _colorAlphaLsbWeight);
+            return lerpColor;
         }
 
-        // IRaindrop
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             _columnSpace.DrawString(spriteBatch, font, SymbolAsStr(), _symbolColor);
-
-            // DEBUG
-            //spriteBatch.DrawString(font, _symbolColor.A.ToString(), new Vector2(0, 25), Color.White);
-            //spriteBatch.DrawString(font, LifeRemaining.ToString(), new Vector2(0, 50), Color.White);
         }
     }
 }
