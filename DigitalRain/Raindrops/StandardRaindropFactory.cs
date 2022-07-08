@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace DigitalRain.Raindrops
 {
@@ -20,9 +21,9 @@ namespace DigitalRain.Raindrops
             var lifespanRange = (_config.lifespanMax + 1) - _config.lifespanMin;
             var randomLifespan = _config.lifespanMin + (_randomGen.NextDouble() * lifespanRange);
             var symbol = GetSymbolFromPool(SymbolPools.EnglishAlphanumericUpperSymbols());
-            return new StandardRaindrop(
-                space, randomLifespan, symbolColor: StandardRaindrop.DefaultColor, symbol
-            );
+            var colorCalculator = new ColorCalculator(
+                timespan: randomLifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
+            return new StandardRaindrop(space, symbol, randomLifespan, colorCalculator);
         }
 
         private char GetSymbolFromPool(char[] symbolPool)

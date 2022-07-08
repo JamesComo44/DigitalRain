@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace DigitalRain.Raindrops
 {
@@ -26,10 +27,9 @@ namespace DigitalRain.Raindrops
             var lifespan = GetLifespan(space);
             var symbolPool = GetSymbolPool(space);
             var symbol = GetSymbolFromPool(symbolPool);
-            
-            return new StandardRaindrop(
-                space, lifespan, symbolColor: StandardRaindrop.DefaultColor, symbol
-            );
+            var colorCalculator = new ColorCalculator(
+                timespan: lifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
+            return new StandardRaindrop(space, symbol, lifespan, colorCalculator);
         }
 
         private void InitializeSymbolPoolsAndLifespans(int rowNumber, string fixedText, double fixedLifespan)
