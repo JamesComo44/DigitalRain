@@ -1,0 +1,39 @@
+@startuml
+StreamSpawner --* RaindropStreamPool 
+
+RaindropStreamPool --* UnoccupiedColumnPool
+RaindropStreamPool ..* StandardRaindropFactory
+
+UnoccupiedColumnPool --* IColumnNumberPicker
+IColumnNumberPicker <|-- RoundRobinColumnNumberPicker
+IColumnNumberPicker <|-- RandomColumnNumberPicker
+
+RaindropStreamPool : +RaindropStream Create()
+RaindropStreamPool : +void Restore(Set<RaindropStream> streams)
+RaindropStreamPool : +bool IsLow() {get}
+
+UnoccupiedColumnPool : +Column PickOne()
+UnoccupiedColumnPool : +void Restore(Set<Column>)
+UnoccupiedColumnPool : +int ColumnCount() {get}
+UnoccupiedColumnPool : +bool IsLow() {get}
+
+interface IColumnNumberPicker
+IColumnNumberPicker : +int PickOne()
+IColumnNumberPicker : +void RestoreOne(int columnNumber)
+IColumnNumberPicker : +int ColumnCount() {get}
+IColumnNumberPicker : +bool IsLow() {get}
+
+StandardRaindropFactory : +StandardRaindrop Create()
+
+RaindropStream --* StandardRaindropFactory
+RaindropStream ..* Column
+ColumnSpace --* Column
+
+RaindropStreamPool --> RaindropStream : Creates (passes StandardRaindropFactory and Column)
+StandardRaindropFactory ..> RaindropStream : Returns StandardRaindrop
+IColumnNumberPicker ..> UnoccupiedColumnPool : Returns column number
+UnoccupiedColumnPool ..> RaindropStreamPool : Returns Column
+RaindropStreamPool ..> StreamSpawner : Returns RaindropStream
+RaindropStream --> ColumnSpace : Creates (passes Column)
+
+@enduml
