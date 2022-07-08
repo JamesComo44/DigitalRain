@@ -8,8 +8,6 @@ namespace DigitalRain.Raindrops
 
     public class StandardRaindrop : IRaindrop
     {
-        // IRaindrop
-        public char[] SymbolPool { get; private set; }
         public char Symbol
         {
             get { return _symbol; }
@@ -27,43 +25,23 @@ namespace DigitalRain.Raindrops
         private Color _initialSymbolColor;
         private Color _startColor;
 
-        public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor)
-            : this(space, lifeSpan, symbolColor, SymbolPools.EnglishAlphanumericUpperSymbols())
-        { }
-
-        public StandardRaindrop(ColumnSpace space, double lifeSpan, Color symbolColor, char[] symbolPool)
+        public StandardRaindrop(ColumnSpace space, double lifespan, Color symbolColor, char symbol)
         {
             _columnSpace = space;
 
-            SymbolPool = symbolPool;
-            Symbol = GetSymbolFromPool();
+            Symbol = symbol;
 
-            _colorAlphaLsbWeight = lifeSpan / _maxColorAlpha;
-            LifeRemaining = lifeSpan;
+            _colorAlphaLsbWeight = lifespan / _maxColorAlpha;
+            LifeRemaining = lifespan;
 
             _initialSymbolColor = symbolColor;
             _symbolColor = symbolColor;
             _startColor = Color.White;
         }
 
-        // IRaindrop
         public bool IsDead()
         {
             return LifeRemaining <= 0;
-        }
-
-        // IRaindrop
-        public string SymbolAsStr()
-        {
-            return Symbol.ToString();
-        }
-
-        // IRaindrop
-        public char GetSymbolFromPool()
-        {
-            Random randomGen = new Random();
-            int index = randomGen.Next(SymbolPool.Length);
-            return SymbolPool[index];
         }
 
         float lerpScaleFactor = 350;
@@ -92,7 +70,7 @@ namespace DigitalRain.Raindrops
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
-            _columnSpace.DrawString(spriteBatch, font, SymbolAsStr(), _symbolColor);
+            _columnSpace.DrawString(spriteBatch, font, Symbol.ToString(), _symbolColor);
         }
     }
 }

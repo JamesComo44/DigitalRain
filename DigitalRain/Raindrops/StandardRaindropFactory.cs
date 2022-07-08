@@ -19,9 +19,17 @@ namespace DigitalRain.Raindrops
         {
             var lifespanRange = (_config.lifespanMax + 1) - _config.lifespanMin;
             var randomLifespan = _config.lifespanMin + (_randomGen.NextDouble() * lifespanRange);
+            var symbol = GetSymbolFromPool(SymbolPools.EnglishAlphanumericUpperSymbols());
             return new StandardRaindrop(
-                space, randomLifespan, symbolColor: StandardRaindrop.DefaultColor
+                space, randomLifespan, symbolColor: StandardRaindrop.DefaultColor, symbol
             );
+        }
+
+        private char GetSymbolFromPool(char[] symbolPool)
+        {
+            Random randomGen = new Random();
+            int index = randomGen.Next(symbolPool.Length);
+            return symbolPool[index];
         }
     }
 }

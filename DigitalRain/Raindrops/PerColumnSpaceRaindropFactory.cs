@@ -25,9 +25,10 @@ namespace DigitalRain.Raindrops
         {
             var lifespan = GetLifespan(space);
             var symbolPool = GetSymbolPool(space);
+            var symbol = GetSymbolFromPool(symbolPool);
             
             return new StandardRaindrop(
-                space, lifespan, symbolColor: StandardRaindrop.DefaultColor, symbolPool
+                space, lifespan, symbolColor: StandardRaindrop.DefaultColor, symbol
             );
         }
 
@@ -63,6 +64,13 @@ namespace DigitalRain.Raindrops
             }
 
             return SymbolPools.EnglishAlphanumericUpperSymbols();
+        }
+
+        private char GetSymbolFromPool(char[] symbolPool)
+        {
+            Random randomGen = new Random();
+            int index = randomGen.Next(symbolPool.Length);
+            return symbolPool[index];
         }
     }
 }
