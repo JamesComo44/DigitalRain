@@ -29,6 +29,12 @@ namespace DigitalRain.Raindrops
             var symbol = GetSymbolFromPool(symbolPool);
             var colorCalculator = new ColorCalculator(
                 timespan: lifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
+
+            var glitchChance = 0.1;
+            if (_randomGen.NextDouble() < glitchChance)
+            {
+                return new GlitchedRaindrop(space, symbol, lifespan, colorCalculator);
+            }
             return new StandardRaindrop(space, symbol, lifespan, colorCalculator);
         }
 
@@ -53,7 +59,7 @@ namespace DigitalRain.Raindrops
 
             var lifespanRange = (_config.lifespanMax + 1) - _config.lifespanMin;
             var randomLifespan = _config.lifespanMin + (_randomGen.NextDouble() * lifespanRange);
-            return randomLifespan;
+            return _config.lifespanMax;  // TODO: Put this back
         }
 
         private char[] GetSymbolPool(ColumnSpace space)
@@ -68,8 +74,7 @@ namespace DigitalRain.Raindrops
 
         private char GetSymbolFromPool(char[] symbolPool)
         {
-            Random randomGen = new Random();
-            int index = randomGen.Next(symbolPool.Length);
+            int index = _randomGen.Next(symbolPool.Length);
             return symbolPool[index];
         }
     }

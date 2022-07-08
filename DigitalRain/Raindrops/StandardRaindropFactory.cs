@@ -28,8 +28,7 @@ namespace DigitalRain.Raindrops
 
         private char GetSymbolFromPool(char[] symbolPool)
         {
-            Random randomGen = new Random();
-            int index = randomGen.Next(symbolPool.Length);
+            int index = _randomGen.Next(symbolPool.Length);
             return symbolPool[index];
         }
     }

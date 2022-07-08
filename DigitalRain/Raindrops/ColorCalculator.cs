@@ -8,7 +8,6 @@ namespace DigitalRain.Raindrops
         private static int _maxAlpha = 255;
 
         private readonly double _timespan;
-        private readonly double _alphaLsbWeight;
         private readonly Color _lerpStartColor;
         private readonly Color _lerpEndColor;
         private readonly float _lerpTime;
@@ -19,7 +18,6 @@ namespace DigitalRain.Raindrops
             // Could separate further into an AlphaLerper and a ColorLerper.
             // But for now we just add blank lines to show the two responsibilties XD.
             _timespan = timespan;
-            _alphaLsbWeight = _timespan / _maxAlpha;
 
             _lerpStartColor = startColor;
             _lerpEndColor = endColor;
