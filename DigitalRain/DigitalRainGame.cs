@@ -151,12 +151,11 @@ namespace DigitalRain
 
             foreach (var (column, raindropStream) in _raindropStreams)
             {
-                foreach (var (raindrop, i) in raindropStream.Select((raindrop, i) => (raindrop, i)))
+                foreach (var (raindrop, rowNumber) in raindropStream.Select((raindrop, rowNumber) => (raindrop, rowNumber)))
                 {
                     if (!raindrop.IsDead)
                     {
-                        var columnSpace = column.CreateSpace(number: i, positionY: i * raindropStream.CharacterHeight);
-                        columnSpace.DrawString(_spriteBatch, _raindropFont, raindrop.Symbol, raindrop.Color);
+                        DrawRaindrop(raindrop, coordinates: new GridCoordinates(rowNumber, column.Number));
                     }
                 }
             }
@@ -165,6 +164,12 @@ namespace DigitalRain
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawRaindrop(IRaindrop raindrop, GridCoordinates coordinates)
+        {
+            var screenPosition = new Vector2(coordinates.ColumnNumber * _columnPool.ColumnWidth, coordinates.RowNumber * _currentFontHeight);
+            _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, screenPosition, raindrop.Color);
         }
     }
 }

@@ -6,11 +6,11 @@ namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class GlitchedRaindrop
+    public class GlitchedRaindrop // TODO : IRaindrop
     {
         private static readonly Random _randomGen = new Random();
 
-        private readonly ColumnSpace _columnSpace;
+        private readonly GridCoordinates _coordinates;
         private readonly char _symbol;
 
         private readonly double _lifespan;
@@ -21,9 +21,9 @@ namespace DigitalRain.Raindrops
 
         private readonly int _glitchSpeedFactor;
 
-        public GlitchedRaindrop(ColumnSpace space, char symbol, double lifespan, ColorCalculator colorCalculator)
+        public GlitchedRaindrop(GridCoordinates coordinates, char symbol, double lifespan, ColorCalculator colorCalculator)
         {
-            _columnSpace = space;
+            _coordinates = coordinates;
             _symbol = symbol;
             _lifespan = lifespan;
             LifeRemaining = lifespan;
@@ -48,11 +48,6 @@ namespace DigitalRain.Raindrops
                 var glitchedTimeRemaining = _lifespan - glitchedElapsedTime;
                 _currentColor = _colorCalculator.Calculate(glitchedTimeRemaining);
             }
-        }
-
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
-        {
-            _columnSpace.DrawString(spriteBatch, font, _symbol.ToString(), _currentColor);
         }
     }
 }
