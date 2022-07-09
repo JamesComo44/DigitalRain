@@ -30,11 +30,12 @@ namespace DigitalRain.Raindrops
             var colorCalculator = new ColorCalculator(
                 timespan: lifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
 
-            //var glitchChance = 0.07;
-            //if (_randomGen.NextDouble() < glitchChance)
-            //{
-            //    return new GlitchedRaindrop(coordinates, symbol, lifespan, colorCalculator);
-            //}
+            var glitchChance = 0.07;
+            if (_randomGen.NextDouble() < glitchChance)
+            {
+                // TODO: Needs to implement IRaindrop if we want to get it working again.
+                // return new GlitchedRaindrop(coordinates, symbol, lifespan, colorCalculator);
+            }
             return new StandardRaindrop(symbol, lifespan, colorCalculator);
         }
 
