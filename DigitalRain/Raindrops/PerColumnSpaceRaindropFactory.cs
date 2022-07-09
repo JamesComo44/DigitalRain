@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace DigitalRain.Raindrops
 {
@@ -10,15 +11,15 @@ namespace DigitalRain.Raindrops
     {
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
-        private readonly Dictionary<(int, int), char[]> _symbolPools;
-        private readonly Dictionary<(int, int), double> _lifespans;
+        private readonly Dictionary<GridCoordinates, char[]> _symbolPools;
+        private readonly Dictionary<GridCoordinates, double> _lifespans;
 
         public PerColumnSpaceRaindropFactory()
         {
             _config = DigitalRainGame.Config.standardRaindropFactory;
 
-            _symbolPools = new Dictionary<(int, int), char[]>();
-            _lifespans = new Dictionary<(int, int), double>();
+            _symbolPools = new Dictionary<GridCoordinates, char[]>();
+            _lifespans = new Dictionary<GridCoordinates, double>();
             InitializeSymbolPoolsAndLifespans(rowNumber: 7, fixedText: "HELLO WORLD!", fixedLifespan: 120000); // 2 minutes
         }
 
@@ -44,8 +45,8 @@ namespace DigitalRain.Raindrops
             var columnNumber = (columnCount / 2) - (fixedText.Length / 2);
             foreach (var character in fixedText)
             {
-                _symbolPools[(rowNumber, columnNumber)] = new char[] { character };
-                _lifespans[(rowNumber, columnNumber)] = fixedLifespan;
+                _symbolPools[new GridCoordinates(rowNumber, columnNumber)] = new char[] { character };
+                _lifespans[new GridCoordinates(rowNumber, columnNumber)] = fixedLifespan;
                 columnNumber++;
             }
         }
@@ -54,6 +55,7 @@ namespace DigitalRain.Raindrops
         {
             if (_lifespans.ContainsKey(space.Coordinates))
             {
+                Debug.WriteLine("Found the coordinate! = " + space.Coordinates.RowNumber.ToString() + ", " + space.Coordinates.ColumnNumber.ToString());
                 return _lifespans[space.Coordinates];
             }
 
