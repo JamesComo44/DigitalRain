@@ -6,6 +6,8 @@ namespace DigitalRain
 {
     using Columns;
     using Raindrops;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class DigitalRainGame : Game
     {
@@ -18,7 +20,11 @@ namespace DigitalRain
         private SpriteFont _raindropFont;
         private SpriteFont _debugFont;
 
-        private StreamSpawner _spawner;
+        private StreamSpawnerConfig _config;
+        private RaindropStreamPool _streamPool;
+        private List<RaindropStream> _raindropStreams;
+        private double _lastRaindropStreamCreationTimeInSeconds;
+        private float _currentFontHeight;
 
         public DigitalRainGame(DigitalRainConfig config)
         {
@@ -37,11 +43,14 @@ namespace DigitalRain
             var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            // TODO: Switch between these configurably
-            //var raindropFactory = new StandardRaindropFactory();
             var raindropFactory = new PerColumnSpaceRaindropFactory();
             var streamPool = new RaindropStreamPool(columnPool, raindropFactory);
-            _spawner = new StreamSpawner(streamPool);
+
+            _config = DigitalRainGame.Config.streamSpawner;
+            _streamPool = streamPool;
+            _raindropStreams = new List<RaindropStream>();
+            _lastRaindropStreamCreationTimeInSeconds = 0;
+            _currentFontHeight = 0;
 
             base.Initialize();
         }
@@ -51,7 +60,7 @@ namespace DigitalRain
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _debugFont = Content.Load<SpriteFont>("Fonts/debug");
             _raindropFont = Content.Load<SpriteFont>("Fonts/raindrop");
-            _spawner.SetFontHeight(_raindropFont.MeasureString("A").Y);
+            _currentFontHeight = _raindropFont.MeasureString("A").Y;
         }
 
         protected override void UnloadContent()
@@ -66,7 +75,12 @@ namespace DigitalRain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _spawner.Update(gameTime);
+            AddNewRaindropStreams(gameTime);
+            RemoveDeadRaindropStreams();
+            foreach (var stream in _raindropStreams)
+            {
+                stream.Update(gameTime);
+            }
 
             // In-Game Debug Controls
             if (WasKeyPressed(Keys.OemTilde))
@@ -82,6 +96,27 @@ namespace DigitalRain
             base.Update(gameTime);
         }
 
+        private void AddNewRaindropStreams(GameTime gameTime)
+        {
+            var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
+            if (timeElapsedSinceLastNewRaindropStream > _config.minSecondsPerNewRaindropStream)
+            {
+                if (!_streamPool.IsLow)
+                {
+                    _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
+                    var raindropStream = _streamPool.Create(_currentFontHeight);
+                    _raindropStreams.Add(raindropStream);
+                }
+            }
+        }
+
+        private void RemoveDeadRaindropStreams()
+        {
+            var deadStreams = _raindropStreams.Where((stream) => stream.IsDead).ToHashSet();
+            _raindropStreams = _raindropStreams.Where((stream) => !stream.IsDead).ToList();
+            _streamPool.Restore(deadStreams);
+        }
+
         private bool WasKeyPressed(Keys key)
         {
             return (Keyboard.GetState().IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key));
@@ -92,7 +127,12 @@ namespace DigitalRain
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            _spawner.Draw(_spriteBatch, _raindropFont);
+
+            foreach (var stream in _raindropStreams)
+            {
+                stream.Draw(_spriteBatch, _raindropFont);
+            }
+
             ConfigDebugEdit.Draw(_spriteBatch, _debugFont);
             _spriteBatch.End();
 
