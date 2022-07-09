@@ -6,16 +6,16 @@ namespace DigitalRain.Raindrops
     using Columns;
     using System;
 
-    public class RaindropStreamPool
+    public class RaindropStreamFactory
     {
         private static readonly Random _randomGen = new Random();
 
-        private readonly RaindropStreamPoolConfig _config;
+        private readonly RaindropStreamFactoryConfig _config;
         private readonly IRaindropFactory _raindropFactory;
 
-        public RaindropStreamPool(IRaindropFactory raindropFactory)
+        public RaindropStreamFactory(IRaindropFactory raindropFactory)
         {
-            _config = DigitalRainGame.Config.raindropStreamPool;
+            _config = DigitalRainGame.Config.raindropStreamFactory;
             _raindropFactory = raindropFactory;
         }
 

@@ -23,7 +23,7 @@ namespace DigitalRain
 
         private StreamSpawnerConfig _config;
         private UnoccupiedColumnPool _columnPool;
-        private RaindropStreamPool _streamPool;
+        private RaindropStreamFactory _streamFactory;
         private List<(Column, RaindropStream)> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
         private float _currentFontHeight;
@@ -47,10 +47,10 @@ namespace DigitalRain
             _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
             //var raindropFactory = new PerColumnSpaceRaindropFactory();
             var raindropFactory = new StandardRaindropFactory();
-            var streamPool = new RaindropStreamPool(raindropFactory);
+            var streamFactory = new RaindropStreamFactory(raindropFactory);
 
             _config = DigitalRainGame.Config.streamSpawner;
-            _streamPool = streamPool;
+            _streamFactory = streamFactory;
             _raindropStreams = new List<(Column, RaindropStream)>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
             _currentFontHeight = 0;
@@ -109,7 +109,7 @@ namespace DigitalRain
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
                     var column = _columnPool.PickOne();
-                    var raindropStream = _streamPool.Create(_currentFontHeight, column);
+                    var raindropStream = _streamFactory.Create(_currentFontHeight, column);
                     _raindropStreams.Add((column, raindropStream));
                 }
             }

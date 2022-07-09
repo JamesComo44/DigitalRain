@@ -7,7 +7,7 @@
   "streamSpawner": {
     "minSecondsPerNewRaindropStream": 0.3
   },
-  "raindropStreamPool": {
+  "raindropStreamFactory": {
     "streamFallSpeedMin": 100,
     "streamFallSpeedMax": 400
   },
