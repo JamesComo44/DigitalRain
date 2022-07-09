@@ -7,7 +7,7 @@ namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class PerColumnSpaceRaindropFactory : IRaindropFactory
+    public class PerColumnSpaceRaindropFactory
     {
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
@@ -36,7 +36,7 @@ namespace DigitalRain.Raindrops
             //{
             //    return new GlitchedRaindrop(space, symbol, lifespan, colorCalculator);
             //}
-            return new StandardRaindrop(space, symbol, lifespan, colorCalculator);
+            return new StandardRaindrop(symbol, lifespan, colorCalculator);
         }
 
         private void InitializeSymbolPoolsAndLifespans(int rowNumber, string fixedText, double fixedLifespan)

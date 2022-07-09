@@ -12,31 +12,19 @@ namespace DigitalRain.Raindrops
 
         private readonly RaindropStreamPoolConfig _config;
         private readonly IRaindropFactory _raindropFactory;
-        private readonly UnoccupiedColumnPool _columnPool;
 
-        public RaindropStreamPool(UnoccupiedColumnPool columnPool, IRaindropFactory raindropFactory)
+        public RaindropStreamPool(IRaindropFactory raindropFactory)
         {
             _config = DigitalRainGame.Config.raindropStreamPool;
             _raindropFactory = raindropFactory;
-            _columnPool = columnPool;
         }
 
-        public RaindropStream Create(float fontHeight)
+        public RaindropStream Create(float fontHeight, Column column)
         {
             var speedInPixelsPerSecond = _randomGen.Next(
                 _config.streamFallSpeedMin, _config.streamFallSpeedMax + 1);
 
-            var column = _columnPool.PickOne();
-
             return new RaindropStream(_raindropFactory, column, speedInPixelsPerSecond, fontHeight);
-        }
-
-        public bool IsLow { get { return _columnPool.IsLow; } }
-
-        public void Restore(ISet<RaindropStream> streams)
-        {
-            var columnsToRestore = streams.Select((stream) => stream.Column).ToHashSet();
-            _columnPool.Restore(columnsToRestore);
         }
     }
 }
