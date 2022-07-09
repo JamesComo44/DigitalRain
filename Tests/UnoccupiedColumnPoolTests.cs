@@ -27,7 +27,7 @@ namespace DigitalRain.Tests.DigitalRainTests
             Rectangle bounds = _screenBounds;
             bounds.Width = screenWidth;
 
-            var picker = new RandomColumnNumberPicker(columnCount, 10);
+            var picker = new RandomColumnNumberPicker(columnCount, 0);
             var pool = new UnoccupiedColumnPool(picker, bounds);
 
             Column column = pool.PickOne();
@@ -51,7 +51,7 @@ namespace DigitalRain.Tests.DigitalRainTests
             var picker = new RandomColumnNumberPicker(columnCount, 1);
             var pool = new UnoccupiedColumnPool(picker, _screenBounds);
 
-            for (int i = 0; i < columnCount; i++)
+            for (int i = 0; i < columnCount - 1; i++)
             {
                 pool.PickOne();
             }
