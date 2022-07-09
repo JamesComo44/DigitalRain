@@ -153,10 +153,7 @@ namespace DigitalRain
             {
                 foreach (var (raindrop, rowNumber) in raindropStream.Select((raindrop, rowNumber) => (raindrop, rowNumber)))
                 {
-                    if (!raindrop.IsDead)
-                    {
-                        DrawRaindrop(raindrop, coordinates: new GridCoordinates(rowNumber, column.Number));
-                    }
+                    DrawRaindrop(raindrop, coordinates: new GridCoordinates(rowNumber, column.Number));
                 }
             }
 
@@ -168,6 +165,10 @@ namespace DigitalRain
 
         private void DrawRaindrop(IRaindrop raindrop, GridCoordinates coordinates)
         {
+            if (raindrop.IsDead)
+            {
+                return;
+            }
             var screenPosition = new Vector2(coordinates.ColumnNumber * _columnPool.ColumnWidth, coordinates.RowNumber * _currentFontHeight);
             _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, screenPosition, raindrop.Color);
         }
