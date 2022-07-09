@@ -37,7 +37,9 @@ namespace DigitalRain
             var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
             var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            var raindropFactory = new StandardRaindropFactory();
+            // TODO: Switch between these configurably
+            //var raindropFactory = new StandardRaindropFactory();
+            var raindropFactory = new PerColumnSpaceRaindropFactory();
             var streamPool = new RaindropStreamPool(columnPool, raindropFactory);
             _spawner = new StreamSpawner(streamPool);
 
@@ -95,51 +97,6 @@ namespace DigitalRain
             _spriteBatch.End();
 
             base.Draw(gameTime);
-        }
-
-        //TODO: Test code don't forget to remove this!
-        // DEBUG
-        private void TestSamplerState()
-        {
-            string text = "Hello World S A 10 893354 I l L I";
-            Vector2 textMiddlePoint = _raindropFont.MeasureString(text) / 2;
-            Vector2 position;
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            string draw_text = text + " PointClamp";
-            position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 2.1f);
-            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicClamp);
-            draw_text = text + " AnisotropicClamp";
-            position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 2.6f);
-            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp);
-            draw_text = text + " LinearClamp";
-            position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 3f);
-            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap);
-            draw_text = text + " PointWrap";
-            position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 3.5f);
-            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearWrap);
-            draw_text = text + " LinearWrap";
-            position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 4.5f);
-            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap);
-            draw_text = text + " AnisotropicWrap";
-            position = new Vector2(_screenBounds.X / 2.5f, _screenBounds.Y / 5.8f);
-            _spriteBatch.DrawString(_raindropFont, draw_text, position, Color.GreenYellow, 0, textMiddlePoint, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
         }
     }
 }

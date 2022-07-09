@@ -1,10 +1,11 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class StandardRaindropFactory
+    public class StandardRaindropFactory : IRaindropFactory
     {
         // Static will use the same seed across all class instances.
         private static readonly Random _randomGen = new Random();
@@ -15,13 +16,20 @@ namespace DigitalRain.Raindrops
             _config = DigitalRainGame.Config.standardRaindropFactory;
         }
 
-        public StandardRaindrop Create(ColumnSpace space)
+        public IRaindrop Create(ColumnSpace space)
         {
             var lifespanRange = (_config.lifespanMax + 1) - _config.lifespanMin;
             var randomLifespan = _config.lifespanMin + (_randomGen.NextDouble() * lifespanRange);
-            return new StandardRaindrop(
-                space, randomLifespan, symbolColor: StandardRaindrop.DefaultColor
-            );
+            var symbol = GetSymbolFromPool(SymbolPools.EnglishAlphanumericUpperSymbols());
+            var colorCalculator = new ColorCalculator(
+                timespan: randomLifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
+            return new StandardRaindrop(space, symbol, randomLifespan, colorCalculator);
+        }
+
+        private char GetSymbolFromPool(char[] symbolPool)
+        {
+            int index = _randomGen.Next(symbolPool.Length);
+            return symbolPool[index];
         }
     }
 }

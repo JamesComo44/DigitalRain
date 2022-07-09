@@ -12,7 +12,7 @@ namespace DigitalRain.Columns
 		private List<int> _columnNumberPool;
 
 		public int ColumnCount { get { return _columnCount; } }
-		public bool IsLow { get { return _columnNumberPool.Count < _lowWaterMark; } }
+		public bool IsLow { get { return _columnNumberPool.Count <= _lowWaterMark; } }
 
 		public RandomColumnNumberPicker(int columnCount, int lowWaterMark)
         {

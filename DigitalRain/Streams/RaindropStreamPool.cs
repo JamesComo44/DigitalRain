@@ -11,10 +11,10 @@ namespace DigitalRain.Raindrops
         private static readonly Random _randomGen = new Random();
 
         private readonly RaindropStreamPoolConfig _config;
-        private readonly StandardRaindropFactory _raindropFactory;
+        private readonly IRaindropFactory _raindropFactory;
         private readonly UnoccupiedColumnPool _columnPool;
 
-        public RaindropStreamPool(UnoccupiedColumnPool columnPool, StandardRaindropFactory raindropFactory)
+        public RaindropStreamPool(UnoccupiedColumnPool columnPool, IRaindropFactory raindropFactory)
         {
             _config = DigitalRainGame.Config.raindropStreamPool;
             _raindropFactory = raindropFactory;

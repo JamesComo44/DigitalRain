@@ -7,7 +7,7 @@ namespace DigitalRain.Columns
     {
         private readonly IColumnNumberPicker _columnNumberPicker;
         private readonly Rectangle _columnDimensions;
-        private readonly Dictionary<Column, int> _columnToColumnNumber;
+        private List<Column> _occupiedColumns;
 
         public UnoccupiedColumnPool(IColumnNumberPicker columnNumberPicker, Rectangle screenBounds)
         {
@@ -17,7 +17,7 @@ namespace DigitalRain.Columns
                 width: screenBounds.Width / ColumnCount,
                 height: screenBounds.Height
             );
-            _columnToColumnNumber = new Dictionary<Column, int>();
+            _occupiedColumns = new List<Column>();
         }
 
         public int ColumnCount
@@ -33,20 +33,29 @@ namespace DigitalRain.Columns
 
             var positionX = CalculatePositionX(columnNumber);
             var column = new Column(
+                number: columnNumber,
                 bounds: new Rectangle(positionX, 0, _columnDimensions.Width, _columnDimensions.Height)
             );
-            _columnToColumnNumber[column] = columnNumber;
+            _occupiedColumns.Add(column);
 
             return column;
         }
 
         public void Restore(ISet<Column> columnsToRestore)
         {
-            foreach (var column in columnsToRestore)
+            var newOccupiedColumns = new List<Column>();
+            foreach (var column in _occupiedColumns)
             {
-                _columnToColumnNumber.Remove(column, out int columnNumber);
-                _columnNumberPicker.RestoreOne(columnNumber);
+                if (!columnsToRestore.Contains(column))
+                {
+                    newOccupiedColumns.Add(column);
+                }
+                else
+                {
+                    _columnNumberPicker.RestoreOne(column.Number);
+                }
             }
+            _occupiedColumns = newOccupiedColumns;
         }
 
         private int CalculatePositionX(int columnNumber)

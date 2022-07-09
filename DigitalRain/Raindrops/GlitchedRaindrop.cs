@@ -6,22 +6,30 @@ namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class StandardRaindrop : IRaindrop
+    public class GlitchedRaindrop : IRaindrop
     {
+        private static readonly Random _randomGen = new Random();
+
         private readonly ColumnSpace _columnSpace;
         private readonly char _symbol;
+
+        private readonly double _lifespan;
         public double LifeRemaining { get; private set; }
 
         private readonly ColorCalculator _colorCalculator;
         private Color _currentColor;
 
-        public StandardRaindrop(ColumnSpace space, char symbol, double lifespan, ColorCalculator colorCalculator)
+        private readonly int _glitchSpeedFactor;
+
+        public GlitchedRaindrop(ColumnSpace space, char symbol, double lifespan, ColorCalculator colorCalculator)
         {
             _columnSpace = space;
             _symbol = symbol;
+            _lifespan = lifespan;
             LifeRemaining = lifespan;
             _colorCalculator = colorCalculator;
             _currentColor = _colorCalculator.StartColor;
+            _glitchSpeedFactor = _randomGen.Next(5, 15);
         }
 
         public bool IsDead()
@@ -34,7 +42,11 @@ namespace DigitalRain.Raindrops
             if (!IsDead())
             {
                 LifeRemaining = (float)Math.Max(LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds, 0);
-                _currentColor = _colorCalculator.Calculate(LifeRemaining);
+
+                var totalElapsedTime = _lifespan - LifeRemaining;
+                var glitchedElapsedTime = (totalElapsedTime * _glitchSpeedFactor) % (_lifespan + 1);
+                var glitchedTimeRemaining = _lifespan - glitchedElapsedTime;
+                _currentColor = _colorCalculator.Calculate(glitchedTimeRemaining);
             }
         }
 
