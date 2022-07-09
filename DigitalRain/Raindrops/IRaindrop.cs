@@ -8,8 +8,13 @@ namespace DigitalRain.Raindrops
 {
     using GameUtilities;
 
-    public interface IRaindrop : IGameObject
+    public interface IRaindrop
     {
+        public void Update(GameTime gameTime);
+
         public bool IsDead();
+        
+        public string Symbol { get; }
+        public Color Color { get; }
     }
 }

@@ -15,7 +15,7 @@ namespace DigitalRain.Raindrops
         private readonly float _speedInPixelsPerSecond;
         private double _unboundDistanceFallenInPixels;
         private int _raindropCount;
-        readonly List<IRaindrop> _raindrops;
+        readonly List<(ColumnSpace, IRaindrop)> _raindrops;
 
         public RaindropStream(IRaindropFactory raindropFactory, Column column, float speedInPixelsPerSecond, float fontHeight)
         {
@@ -23,7 +23,7 @@ namespace DigitalRain.Raindrops
             Column = column;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
-            _raindrops = new List<IRaindrop>();
+            _raindrops = new List<(ColumnSpace, IRaindrop)>();
             _raindropCount = 0;  // This climbs forever, whereas the size of the list above shrinks as we delete things.
         }
 
@@ -48,7 +48,7 @@ namespace DigitalRain.Raindrops
 
             Fall(gameTime);
 
-            foreach (var raindrop in _raindrops)
+            foreach (var (columnSpace, raindrop) in _raindrops)
             {
                 raindrop.Update(gameTime);
             }
@@ -56,9 +56,9 @@ namespace DigitalRain.Raindrops
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
-            foreach (var raindrop in _raindrops)
+            foreach (var (columnSpace, raindrop) in _raindrops)
             {
-                raindrop.Draw(spriteBatch, font);
+                columnSpace.DrawString(spriteBatch, font, raindrop.Symbol, raindrop.Color);
             }
         }
 
@@ -77,7 +77,7 @@ namespace DigitalRain.Raindrops
                 _raindropCount++;
                 var columnSpace = Column.CreateSpace(number: _raindropCount, positionY: StreamHeight);
                 var raindrop = _raindropFactory.Create(columnSpace);
-                _raindrops.Add(raindrop);
+                _raindrops.Add((columnSpace, raindrop));
             }
         }
 
@@ -87,7 +87,10 @@ namespace DigitalRain.Raindrops
             // Even if this isn't true, they'll *eventually* be cleaned up, but performance would be sub-optimal.
             // I think this assumption will remain mostly true, with "glitched raindrops" being the only exception.
             var indexOfFirstLivingRaindrop = _raindrops.FindIndex(
-                (IRaindrop raindrop) => { return !raindrop.IsDead(); }
+                (tuple) => {
+                    var (_, raindrop) = tuple;
+                    return !raindrop.IsDead(); 
+                }
             );
 
             if (indexOfFirstLivingRaindrop == -1)

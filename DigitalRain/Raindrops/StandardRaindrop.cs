@@ -9,19 +9,20 @@ namespace DigitalRain.Raindrops
     public class StandardRaindrop : IRaindrop
     {
         private readonly ColumnSpace _columnSpace;
-        private readonly char _symbol;
         public double LifeRemaining { get; private set; }
 
         private readonly ColorCalculator _colorCalculator;
-        private Color _currentColor;
+
+        public Color Color { get; private set; }
+        public string Symbol { get; private set; }
 
         public StandardRaindrop(ColumnSpace space, char symbol, double lifespan, ColorCalculator colorCalculator)
         {
             _columnSpace = space;
-            _symbol = symbol;
+            Symbol = symbol.ToString();
             LifeRemaining = lifespan;
             _colorCalculator = colorCalculator;
-            _currentColor = _colorCalculator.StartColor;
+            Color = _colorCalculator.StartColor;
         }
 
         public bool IsDead()
@@ -34,13 +35,8 @@ namespace DigitalRain.Raindrops
             if (!IsDead())
             {
                 LifeRemaining = (float)Math.Max(LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds, 0);
-                _currentColor = _colorCalculator.Calculate(LifeRemaining);
+                Color = _colorCalculator.Calculate(LifeRemaining);
             }
-        }
-
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
-        {
-            _columnSpace.DrawString(spriteBatch, font, _symbol.ToString(), _currentColor);
         }
     }
 }

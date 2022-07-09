@@ -6,7 +6,7 @@ namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class GlitchedRaindrop : IRaindrop
+    public class GlitchedRaindrop
     {
         private static readonly Random _randomGen = new Random();
 
