@@ -6,8 +6,6 @@ using System.Text;
 
 namespace DigitalRain.Raindrops
 {
-    using GameUtilities;
-
     public interface IModelObject
     {
         public void Update(GameTime gameTime);
@@ -16,8 +14,8 @@ namespace DigitalRain.Raindrops
     public interface IRaindrop : IModelObject
     {
         public bool IsDead { get; }
-
         public string Symbol { get; }
         public Color Color { get; }
+        public Vector2 Position { get; }
     }
 }

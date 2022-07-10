@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 
 namespace DigitalRain.Raindrops
 {
+    using Columns;
+
     public class StandardRaindropFactory : IRaindropFactory
     {
         // Static will use the same seed across all class instances.
@@ -13,15 +15,16 @@ namespace DigitalRain.Raindrops
         {
             _config = DigitalRainGame.Config.standardRaindropFactory;
         }
-
-        public IRaindrop Create()
+        
+        public IRaindrop Create(GridCoordinates coordinates, int columnWidth, float symbolHeight)
         {
             var lifespanRange = (_config.lifespanMax + 1) - _config.lifespanMin;
             var randomLifespan = _config.lifespanMin + (_randomGen.NextDouble() * lifespanRange);
             var symbol = GetSymbolFromPool(SymbolPools.EnglishAlphanumericUpperSymbols());
             var colorCalculator = new ColorCalculator(
                 timespan: randomLifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
-            return new StandardRaindrop(symbol, randomLifespan, colorCalculator);
+            var position = new Vector2(coordinates.ColumnNumber * columnWidth, coordinates.RowNumber * symbolHeight);
+            return new StandardRaindrop(position, symbol, randomLifespan, colorCalculator);
         }
 
         private char GetSymbolFromPool(char[] symbolPool)

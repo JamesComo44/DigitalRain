@@ -109,7 +109,7 @@ namespace DigitalRain
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
                     var column = _columnPool.PickOne();
-                    var raindropStream = _streamFactory.Create(_currentFontHeight, column);
+                    var raindropStream = _streamFactory.Create(column, _currentFontHeight);
                     _raindropStreams.Add((column, raindropStream));
                 }
             }
@@ -153,7 +153,7 @@ namespace DigitalRain
             {
                 foreach (var (raindrop, rowNumber) in raindropStream.Select((raindrop, rowNumber) => (raindrop, rowNumber)))
                 {
-                    DrawRaindrop(raindrop, coordinates: new GridCoordinates(rowNumber, column.Number));
+                    DrawRaindrop(raindrop);
                 }
             }
 
@@ -163,14 +163,9 @@ namespace DigitalRain
             base.Draw(gameTime);
         }
 
-        private void DrawRaindrop(IRaindrop raindrop, GridCoordinates coordinates)
+        private void DrawRaindrop(IRaindrop raindrop)
         {
-            if (raindrop.IsDead)
-            {
-                return;
-            }
-            var screenPosition = new Vector2(coordinates.ColumnNumber * _columnPool.ColumnWidth, coordinates.RowNumber * _currentFontHeight);
-            _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, screenPosition, raindrop.Color);
+            _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, raindrop.Position, raindrop.Color);
         }
     }
 }

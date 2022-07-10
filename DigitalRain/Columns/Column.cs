@@ -14,6 +14,7 @@ namespace DigitalRain.Columns
         }
 
         public int Number { get; private set; }
-        public float Height { get { return _bounds.Height; } }
+        public int Width { get { return _bounds.Width; } }
+        public int Height { get { return _bounds.Height; } }
     }
 }

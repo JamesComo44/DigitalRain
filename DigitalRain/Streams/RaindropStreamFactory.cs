@@ -19,12 +19,12 @@ namespace DigitalRain.Raindrops
             _raindropFactory = raindropFactory;
         }
 
-        public RaindropStream Create(float fontHeight, Column column)
+        public RaindropStream Create(Column column, float fontHeight)
         {
             var speedInPixelsPerSecond = _randomGen.Next(
                 _config.streamFallSpeedMin, _config.streamFallSpeedMax + 1);
 
-            return new RaindropStream(_raindropFactory, column, speedInPixelsPerSecond, fontHeight);
+            return new RaindropStream(column, _raindropFactory, speedInPixelsPerSecond, fontHeight);
         }
     }
 }

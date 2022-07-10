@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DigitalRain.Raindrops
 {
     using Columns;
-    using GameUtilities;
     using System.Collections;
 
     public class RaindropStream : IModelObject, IEnumerable<IRaindrop>
@@ -19,10 +18,10 @@ namespace DigitalRain.Raindrops
         private int _raindropCount;
         readonly List<IRaindrop> _raindrops;
 
-        public RaindropStream(IRaindropFactory raindropFactory, Column column, float speedInPixelsPerSecond, float fontHeight)
+        public RaindropStream(Column column, IRaindropFactory raindropFactory, float speedInPixelsPerSecond, float fontHeight)
         {
-            _raindropFactory = raindropFactory;
             _column = column;
+            _raindropFactory = raindropFactory;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _raindrops = new List<IRaindrop>();
@@ -60,7 +59,7 @@ namespace DigitalRain.Raindrops
         {
             while (ThereIsRoomLeftToFall)
             {
-                var raindrop = _raindropFactory.Create();
+                var raindrop = _raindropFactory.Create(new GridCoordinates(_raindropCount, _column.Number), _column.Width, _fontHeight);
                 _raindrops.Add(raindrop);
                 _raindropCount++;
             }
@@ -105,8 +104,8 @@ namespace DigitalRain.Raindrops
         }
 
         // ASSUMPTION: Monospace font (all characters same height)
-        public float CharacterHeight { get { return _fontHeight; } }
-        private float StreamHeight { get { return _raindropCount * CharacterHeight; } }
+        public float SymbolHeight { get { return _fontHeight; } }
+        private float StreamHeight { get { return _raindropCount * SymbolHeight; } }
 
         private float DistanceFallenInPixels
         {
@@ -121,8 +120,8 @@ namespace DigitalRain.Raindrops
         {
             get
             {
-                var nextDrawPositionY = StreamHeight + CharacterHeight;
-                return nextDrawPositionY < DistanceFallenInPixels;
+                var nextSymbolPositionY = StreamHeight + SymbolHeight;
+                return nextSymbolPositionY < DistanceFallenInPixels;
             }
         }
     }
