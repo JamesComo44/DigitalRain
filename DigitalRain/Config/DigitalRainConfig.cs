@@ -43,6 +43,7 @@ namespace DigitalRain.Config
 
     public class DigitalRainConfig
     {
+        public int profile;
         public ColumnNumberPickerConfig columnNumberPicker;
         public StreamSpawnerConfig streamSpawner;
         public RaindropStreamFactoryConfig raindropStreamFactory;

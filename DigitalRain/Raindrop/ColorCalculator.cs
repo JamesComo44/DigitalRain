@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace DigitalRain.Config
+namespace DigitalRain.Raindrop
 {
     public class ColorCalculator
     {
