@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DigitalRain.Raindrops
 {
@@ -10,35 +10,30 @@ namespace DigitalRain.Raindrops
     public class RaindropStream : IModelObject, IEnumerable<IRaindrop>
     {
         private readonly IRaindropFactory _raindropFactory;
-        private readonly Column _column;
+        public Column Column { get; private set; }
         private readonly float _fontHeight;
-        private double? _startTimeInSeconds;
+        private double _lifeSoFarInSeconds;
         private readonly float _speedInPixelsPerSecond;
-        private double _unboundDistanceFallenInPixels;
+        private double _distanceFallenInPixels;
         private int _raindropCount;
-        readonly List<IRaindrop> _raindrops;
+        private List<IRaindrop> _raindrops;
 
         public RaindropStream(Column column, IRaindropFactory raindropFactory, float speedInPixelsPerSecond, float fontHeight)
         {
-            _column = column;
+            Column = column;
             _raindropFactory = raindropFactory;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _raindrops = new List<IRaindrop>();
             _raindropCount = 0;  // This climbs forever, whereas the size of the list above shrinks as we delete things.
-            IsDead = false;
+            _lifeSoFarInSeconds = 0;
         }
-
-        public bool IsDead { get; private set; }
 
         public void Update(GameTime gameTime)
         {
-            if (_startTimeInSeconds == null)
-            {
-                _startTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
-            }
+            _lifeSoFarInSeconds += gameTime.ElapsedGameTime.TotalSeconds;
 
-            Fall(gameTime);
+            Fall();
 
             foreach (var raindrop in _raindrops)
             {
@@ -46,51 +41,42 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        private void Fall(GameTime gameTime)
+        private void Fall()
         {
-            var timeElapsedInSeconds = gameTime.TotalGameTime.TotalSeconds - _startTimeInSeconds;
-            _unboundDistanceFallenInPixels = _speedInPixelsPerSecond * (double)timeElapsedInSeconds;
+            var unboundDistanceFallenInPixels = _speedInPixelsPerSecond * _lifeSoFarInSeconds;
+            _distanceFallenInPixels = System.Math.Min(Column.Height, unboundDistanceFallenInPixels);
+
             AddNewRaindrops();
-            //RemoveDeadRaindrops();
-            UpdateIsDead();
+            RemoveDeadRaindrops();
         }
 
         private void AddNewRaindrops()
         {
-            while (ThereIsRoomLeftToFall)
+            var nextSymbolPositionY = StreamHeight;
+            while (nextSymbolPositionY < _distanceFallenInPixels)
             {
-                var raindrop = _raindropFactory.Create(new GridCoordinates(_raindropCount, _column.Number));
+                var raindrop = _raindropFactory.Create(new GridCoordinates(_raindropCount, Column.Number));
                 _raindrops.Add(raindrop);
                 _raindropCount++;
+                nextSymbolPositionY += SymbolHeight;
             }
-        }
-
-        private void UpdateIsDead()
-        {
-            if (IsDead)
-            {
-                return;
-            }
-
-            var noNewRaindrops = DistanceFallenInPixels == _column.Height && !ThereIsRoomLeftToFall;
-            var allRaindropsDead = _raindrops.TrueForAll(raindrop => raindrop.IsDead);
-            IsDead = noNewRaindrops && allRaindropsDead;
         }
 
         private void RemoveDeadRaindrops()
         {
-            // ASSUMPTION: Raindrops at the tail of the raindrop die before raindrops at the head.
-            // Even if this isn't true, they'll *eventually* be cleaned up, but performance would be sub-optimal.
-            // I think this assumption will remain mostly true, with "glitched raindrops" being the only exception.
-            var indexOfFirstLivingRaindrop = _raindrops.FindIndex(
-                (raindrop) => { return !raindrop.IsDead; }
-            );
+            _raindrops = _raindrops
+                .Where(raindrop => !raindrop.IsDead)
+                .ToList();
+        }
 
-            if (indexOfFirstLivingRaindrop == -1)
+        public bool IsDead
+        {
+            get
             {
-                indexOfFirstLivingRaindrop = _raindrops.Count; 
+                var noExistingRaindrops = _raindrops.Count == 0;
+                var noNewRaindrops = _distanceFallenInPixels >= Column.Height;
+                return noExistingRaindrops && noNewRaindrops;
             }
-            _raindrops.RemoveRange(0, indexOfFirstLivingRaindrop);
         }
 
         public IEnumerator<IRaindrop> GetEnumerator()
@@ -106,23 +92,5 @@ namespace DigitalRain.Raindrops
         // ASSUMPTION: Monospace font (all characters same height)
         public float SymbolHeight { get { return _fontHeight; } }
         private float StreamHeight { get { return _raindropCount * SymbolHeight; } }
-
-        private float DistanceFallenInPixels
-        {
-            get
-            {
-                // Note this value is clamped to the bottom of the column.
-                return System.Math.Min(_column.Height, (float)_unboundDistanceFallenInPixels);
-            }
-        }
-
-        private bool ThereIsRoomLeftToFall
-        {
-            get
-            {
-                var nextSymbolPositionY = StreamHeight + SymbolHeight;
-                return nextSymbolPositionY < DistanceFallenInPixels;
-            }
-        }
     }
 }

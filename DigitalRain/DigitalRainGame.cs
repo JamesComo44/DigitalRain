@@ -24,7 +24,7 @@ namespace DigitalRain
         private StreamSpawnerConfig _config;
         private UnoccupiedColumnPool _columnPool;
         private RaindropStreamFactory _streamFactory;
-        private List<(Column, RaindropStream)> _raindropStreams;
+        private List<RaindropStream> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
         private float _currentFontHeight;
 
@@ -51,7 +51,7 @@ namespace DigitalRain
 
             _config = DigitalRainGame.Config.streamSpawner;
             _streamFactory = streamFactory;
-            _raindropStreams = new List<(Column, RaindropStream)>();
+            _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
             _currentFontHeight = 0;
 
@@ -81,7 +81,7 @@ namespace DigitalRain
             AddNewRaindropStreams(gameTime);
             RemoveDeadRaindropStreams();
 
-            foreach (var (_, raindropStream) in _raindropStreams)
+            foreach (var raindropStream in _raindropStreams)
             {
                 raindropStream.Update(gameTime);
             }
@@ -110,7 +110,7 @@ namespace DigitalRain
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
                     var column = _columnPool.PickOne();
                     var raindropStream = _streamFactory.Create(column, _currentFontHeight);
-                    _raindropStreams.Add((column, raindropStream));
+                    _raindropStreams.Add(raindropStream);
                 }
             }
         }
@@ -118,21 +118,12 @@ namespace DigitalRain
         private void RemoveDeadRaindropStreams()
         {
             var columnsToRestore = _raindropStreams
-                .Where(item => {
-                    var (_, stream) = item;
-                    return stream.IsDead;
-                })
-                .Select(item => {
-                    var (column, _) = item;
-                    return column;
-                })
+                .Where(stream => stream.IsDead)
+                .Select(stream => stream.Column)
                 .ToHashSet();
 
             _raindropStreams = _raindropStreams
-                .Where(item => {
-                    var (_, stream) = item;
-                    return !stream.IsDead;
-                })
+                .Where(stream => !stream.IsDead)
                 .ToList();
 
             _columnPool.Restore(columnsToRestore);
@@ -149,9 +140,9 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
-            foreach (var (column, raindropStream) in _raindropStreams)
+            foreach (var raindropStream in _raindropStreams)
             {
-                foreach (var (raindrop, rowNumber) in raindropStream.Select((raindrop, rowNumber) => (raindrop, rowNumber)))
+                foreach (var raindrop in raindropStream)
                 {
                     DrawRaindrop(raindrop);
                 }

@@ -22,7 +22,7 @@ namespace DigitalRain.Raindrops
             var randomLifespan = _config.lifespanMin + (_randomGen.NextDouble() * lifespanRange);
             var symbol = GetSymbolFromPool(SymbolPools.EnglishAlphanumericUpperSymbols());
             var colorCalculator = new ColorCalculator(
-                timespan: randomLifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);;
+                timespan: randomLifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
             return new StandardRaindrop(coordinates, symbol, randomLifespan, colorCalculator);
         }
 
