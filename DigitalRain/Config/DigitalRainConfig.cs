@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace DigitalRain
+namespace DigitalRain.Config
 {
     public class ColumnNumberPickerConfig
     {

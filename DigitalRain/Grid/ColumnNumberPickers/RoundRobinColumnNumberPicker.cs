@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DigitalRain.Columns
+namespace DigitalRain.Grid.ColumnNumberPickers
 {
 	public class RoundRobinColumnNumberPicker : IColumnNumberPicker
 	{

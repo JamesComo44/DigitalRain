@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Config
 {
-    using Columns;
+    using Grid;
+    using Raindrop.Raindrops;
+    using Raindrop;
 
     public class PerGridCoordinateRaindropFactory
     {

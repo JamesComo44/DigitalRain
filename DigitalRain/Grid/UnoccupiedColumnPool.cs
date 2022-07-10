@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace DigitalRain.Columns
+namespace DigitalRain.Grid
 {
+    using ColumnNumberPickers;
+
     public class UnoccupiedColumnPool
     {
         private readonly IColumnNumberPicker _columnNumberPicker;

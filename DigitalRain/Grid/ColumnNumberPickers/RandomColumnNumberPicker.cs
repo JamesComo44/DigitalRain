@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DigitalRain.Columns
+namespace DigitalRain.Grid.ColumnNumberPickers
 {
 	public class RandomColumnNumberPicker : IColumnNumberPicker
 	{

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DigitalRain
+namespace DigitalRain.Config
 {
-    using Columns;
+    using Grid.ColumnNumberPickers;
 
     public class ColumnNumberPickerFactory
     {

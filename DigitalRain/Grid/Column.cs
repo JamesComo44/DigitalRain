@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DigitalRain.Columns
+namespace DigitalRain.Grid
 {
     public class Column
     {

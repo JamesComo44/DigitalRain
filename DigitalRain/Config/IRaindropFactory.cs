@@ -1,7 +1,8 @@
 ﻿
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Config
 {
-    using Columns;
+    using Grid;
+    using Raindrop.Raindrops;
 
     public interface IRaindropFactory
     {

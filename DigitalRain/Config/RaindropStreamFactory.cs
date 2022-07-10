@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;   
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Config
 {
-    using Columns;
-    using System;
+    using Grid;
+    using Raindrop;
 
     public class RaindropStreamFactory
     {

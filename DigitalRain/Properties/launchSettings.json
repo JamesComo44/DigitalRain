@@ -2,7 +2,7 @@
   "profiles": {
     "DigitalRain": {
       "commandName": "Project",
-      "commandLineArgs": "--config Configs/config.json"
+      "commandLineArgs": "--config Config/config.json"
     }
   }
 }

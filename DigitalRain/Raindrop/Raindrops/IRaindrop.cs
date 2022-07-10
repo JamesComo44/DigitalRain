@@ -1,12 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-namespace DigitalRain.Raindrops
-{
-    using Columns;
 
-    public interface IModelObject
-    {
-        public void Update(GameTime gameTime);
-    }
+namespace DigitalRain.Raindrop.Raindrops
+{
+    using GameUtilities;
+    using Grid;
 
     public interface IRaindrop : IModelObject
     {
