@@ -1,4 +1,5 @@
 {
+  "profile": 4,
   "columnNumberPicker": {
     "type": "RandomColumnNumberPicker",
     "columnCount": 50,

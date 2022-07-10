@@ -35,24 +35,20 @@ namespace DigitalRain
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            DigitalRainGame.Config = config;
+            Config = config;
         }
 
         protected override void Initialize()
         {
-            DigitalRainGame.ConfigDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
+            ConfigDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
 
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
 
-            var columnNumberPickerFactory = new ColumnNumberPickerFactory();
-            var columnNumberPicker = columnNumberPickerFactory.Create();
-            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            //var raindropFactory = new PerColumnSpaceRaindropFactory();
-            var raindropFactory = new StandardRaindropFactory();
-            var streamFactory = new RaindropStreamFactory(raindropFactory);
+            ConfigurationProfile configProfile = ConfigurationProfile.ConfigurationProfiles[Config.profile];
+            _columnPool = new UnoccupiedColumnPool(configProfile.ColumnNumberPicker, _screenBounds);
+            _streamFactory = new RaindropStreamFactory(configProfile.RaindropFactory);
 
-            _config = DigitalRainGame.Config.streamSpawner;
-            _streamFactory = streamFactory;
+            _config = Config.streamSpawner;
             _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
             _currentFontHeight = 0;

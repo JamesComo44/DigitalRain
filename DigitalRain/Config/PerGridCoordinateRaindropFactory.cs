@@ -8,7 +8,7 @@ namespace DigitalRain.Config
     using Raindrop.Raindrops;
     using Raindrop;
 
-    public class PerGridCoordinateRaindropFactory
+    public class PerGridCoordinateRaindropFactory : IRaindropFactory
     {
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
