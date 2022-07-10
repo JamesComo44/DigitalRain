@@ -6,14 +6,14 @@ namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class PerColumnSpaceRaindropFactory
+    public class PerGridCoordinateRaindropFactory
     {
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
         private readonly Dictionary<GridCoordinates, char[]> _symbolPools;
         private readonly Dictionary<GridCoordinates, double> _lifespans;
 
-        public PerColumnSpaceRaindropFactory()
+        public PerGridCoordinateRaindropFactory()
         {
             _config = DigitalRainGame.Config.standardRaindropFactory;
 
