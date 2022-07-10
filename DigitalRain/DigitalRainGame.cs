@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace DigitalRain
 {
@@ -21,7 +22,8 @@ namespace DigitalRain
         private SpriteFont _debugFont;
 
         private StreamSpawnerConfig _config;
-        private RaindropStreamPool _streamPool;
+        private UnoccupiedColumnPool _columnPool;
+        private RaindropStreamFactory _streamFactory;
         private List<RaindropStream> _raindropStreams;
         private double _lastRaindropStreamCreationTimeInSeconds;
         private float _currentFontHeight;
@@ -42,12 +44,13 @@ namespace DigitalRain
 
             var columnNumberPickerFactory = new ColumnNumberPickerFactory();
             var columnNumberPicker = columnNumberPickerFactory.Create();
-            var columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
-            var raindropFactory = new PerColumnSpaceRaindropFactory();
-            var streamPool = new RaindropStreamPool(columnPool, raindropFactory);
+            _columnPool = new UnoccupiedColumnPool(columnNumberPicker, _screenBounds);
+            //var raindropFactory = new PerColumnSpaceRaindropFactory();
+            var raindropFactory = new StandardRaindropFactory();
+            var streamFactory = new RaindropStreamFactory(raindropFactory);
 
             _config = DigitalRainGame.Config.streamSpawner;
-            _streamPool = streamPool;
+            _streamFactory = streamFactory;
             _raindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
             _currentFontHeight = 0;
@@ -77,9 +80,10 @@ namespace DigitalRain
 
             AddNewRaindropStreams(gameTime);
             RemoveDeadRaindropStreams();
-            foreach (var stream in _raindropStreams)
+
+            foreach (var raindropStream in _raindropStreams)
             {
-                stream.Update(gameTime);
+                raindropStream.Update(gameTime);
             }
 
             // In-Game Debug Controls
@@ -101,10 +105,11 @@ namespace DigitalRain
             var timeElapsedSinceLastNewRaindropStream = gameTime.TotalGameTime.TotalSeconds - _lastRaindropStreamCreationTimeInSeconds;
             if (timeElapsedSinceLastNewRaindropStream > _config.minSecondsPerNewRaindropStream)
             {
-                if (!_streamPool.IsLow)
+                if (!_columnPool.IsLow)
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
-                    var raindropStream = _streamPool.Create(_currentFontHeight);
+                    var column = _columnPool.PickOne();
+                    var raindropStream = _streamFactory.Create(column, _currentFontHeight);
                     _raindropStreams.Add(raindropStream);
                 }
             }
@@ -112,9 +117,16 @@ namespace DigitalRain
 
         private void RemoveDeadRaindropStreams()
         {
-            var deadStreams = _raindropStreams.Where((stream) => stream.IsDead).ToHashSet();
-            _raindropStreams = _raindropStreams.Where((stream) => !stream.IsDead).ToList();
-            _streamPool.Restore(deadStreams);
+            var columnsToRestore = _raindropStreams
+                .Where(stream => stream.IsDead)
+                .Select(stream => stream.Column)
+                .ToHashSet();
+
+            _raindropStreams = _raindropStreams
+                .Where(stream => !stream.IsDead)
+                .ToList();
+
+            _columnPool.Restore(columnsToRestore);
         }
 
         private bool WasKeyPressed(Keys key)
@@ -128,15 +140,25 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
-            foreach (var stream in _raindropStreams)
+            foreach (var raindropStream in _raindropStreams)
             {
-                stream.Draw(_spriteBatch, _raindropFont);
+                foreach (var raindrop in raindropStream)
+                {
+                    DrawRaindrop(raindrop);
+                }
             }
 
             ConfigDebugEdit.Draw(_spriteBatch, _debugFont);
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawRaindrop(IRaindrop raindrop)
+        {
+            var coordinates = raindrop.Coordinates;
+            var position = new Vector2(coordinates.ColumnNumber * _columnPool.ColumnWidth, coordinates.RowNumber * _currentFontHeight);
+            _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, position, raindrop.Color);
         }
     }
 }

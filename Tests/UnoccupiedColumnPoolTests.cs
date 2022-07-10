@@ -18,22 +18,6 @@ namespace DigitalRain.Tests.DigitalRainTests
             _screenBounds = new Rectangle(0, 0, 400, 800);
         }
 
-        [TestCase(10, 10, ExpectedResult = 1f)]
-        [TestCase(100, 10, ExpectedResult = 10f)]
-        [TestCase(420, 36, ExpectedResult = 11f)]
-        public float PickOne_ReturnsColumnsWithCorrectWidth(int screenWidth, int columnCount)
-        {
-            // Modify screen width for test case, but copy everything else.
-            Rectangle bounds = _screenBounds;
-            bounds.Width = screenWidth;
-
-            var picker = new RandomColumnNumberPicker(columnCount, 0);
-            var pool = new UnoccupiedColumnPool(picker, bounds);
-
-            Column column = pool.PickOne();
-            return column.Width;
-        }
-
         [Test]
         public void PickOne_ThrowsException_IfColumnCountIsLow([Range(1, 20)] int columnCount)
         {

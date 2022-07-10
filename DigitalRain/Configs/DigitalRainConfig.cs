@@ -25,7 +25,7 @@ namespace DigitalRain
         [JsonProperty(Required = Required.Always)]
         public double minSecondsPerNewRaindropStream;
     }
-    public class RaindropStreamPoolConfig
+    public class RaindropStreamFactoryConfig
     {
         [JsonProperty(Required = Required.Always)]
         public int streamFallSpeedMin;        
@@ -45,7 +45,7 @@ namespace DigitalRain
     {
         public ColumnNumberPickerConfig columnNumberPicker;
         public StreamSpawnerConfig streamSpawner;
-        public RaindropStreamPoolConfig raindropStreamPool;
+        public RaindropStreamFactoryConfig raindropStreamFactory;
         public StandardRaindropFactoryConfig standardRaindropFactory;
     }
 

@@ -25,6 +25,11 @@ namespace DigitalRain.Columns
             get { return _columnNumberPicker.ColumnCount; }
         }
 
+        public float ColumnWidth
+        {
+            get { return _columnDimensions.Width; }
+        }
+
         public bool IsLow { get { return _columnNumberPicker.IsLow; } }
 
         public Column PickOne()

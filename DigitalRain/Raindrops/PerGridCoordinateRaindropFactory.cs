@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using System.Diagnostics;
 
 namespace DigitalRain.Raindrops
 {
     using Columns;
 
-    public class PerColumnSpaceRaindropFactory : IRaindropFactory
+    public class PerGridCoordinateRaindropFactory
     {
         private static readonly Random _randomGen = new Random();
         private readonly StandardRaindropFactoryConfig _config;
         private readonly Dictionary<GridCoordinates, char[]> _symbolPools;
         private readonly Dictionary<GridCoordinates, double> _lifespans;
 
-        public PerColumnSpaceRaindropFactory()
+        public PerGridCoordinateRaindropFactory()
         {
             _config = DigitalRainGame.Config.standardRaindropFactory;
 
@@ -23,10 +22,10 @@ namespace DigitalRain.Raindrops
             InitializeSymbolPoolsAndLifespans(rowNumber: 7, fixedText: "HELLO WORLD!", fixedLifespan: 120000); // 2 minutes
         }
 
-        public IRaindrop Create(ColumnSpace space)
+        public IRaindrop Create(GridCoordinates coordinates)
         {
-            var lifespan = GetLifespan(space);
-            var symbolPool = GetSymbolPool(space);
+            var lifespan = GetLifespan(coordinates);
+            var symbolPool = GetSymbolPool(coordinates);
             var symbol = GetSymbolFromPool(symbolPool);
             var colorCalculator = new ColorCalculator(
                 timespan: lifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
@@ -34,9 +33,10 @@ namespace DigitalRain.Raindrops
             var glitchChance = 0.07;
             if (_randomGen.NextDouble() < glitchChance)
             {
-                return new GlitchedRaindrop(space, symbol, lifespan, colorCalculator);
+                // TODO: Needs to implement IRaindrop if we want to get it working again.
+                // return new GlitchedRaindrop(coordinates, symbol, lifespan, colorCalculator);
             }
-            return new StandardRaindrop(space, symbol, lifespan, colorCalculator);
+            return new StandardRaindrop(coordinates, symbol, lifespan, colorCalculator);
         }
 
         private void InitializeSymbolPoolsAndLifespans(int rowNumber, string fixedText, double fixedLifespan)
@@ -51,12 +51,11 @@ namespace DigitalRain.Raindrops
             }
         }
 
-        private double GetLifespan(ColumnSpace space)
+        private double GetLifespan(GridCoordinates coordinates)
         {
-            if (_lifespans.ContainsKey(space.Coordinates))
+            if (_lifespans.ContainsKey(coordinates))
             {
-                Debug.WriteLine("Found the coordinate! = " + space.Coordinates.RowNumber.ToString() + ", " + space.Coordinates.ColumnNumber.ToString());
-                return _lifespans[space.Coordinates];
+                return _lifespans[coordinates];
             }
 
             var lifespanRange = (_config.lifespanMax + 1) - _config.lifespanMin;
@@ -64,11 +63,11 @@ namespace DigitalRain.Raindrops
             return _config.lifespanMax;  // TODO: Put this back
         }
 
-        private char[] GetSymbolPool(ColumnSpace space)
+        private char[] GetSymbolPool(GridCoordinates coordinates)
         {
-            if (_symbolPools.ContainsKey(space.Coordinates))
+            if (_symbolPools.ContainsKey(coordinates))
             {
-                return _symbolPools[space.Coordinates];
+                return _symbolPools[coordinates];
             }
 
             return SymbolPools.EnglishAlphanumericUpperSymbols();
