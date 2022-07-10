@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace DigitalRain.Raindrops
 {
+    using Columns;
+
     public interface IModelObject
     {
         public void Update(GameTime gameTime);
@@ -16,6 +13,6 @@ namespace DigitalRain.Raindrops
         public bool IsDead { get; }
         public string Symbol { get; }
         public Color Color { get; }
-        public Vector2 Position { get; }
+        public GridCoordinates Coordinates { get; }
     }
 }

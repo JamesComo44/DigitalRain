@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DigitalRain.Columns
 {
@@ -20,6 +19,6 @@ namespace DigitalRain.Columns
         public bool Equals([AllowNull] GridCoordinates other)
         {
             return other != null && _point == other._point;
-        }        
+        }
     }
 }

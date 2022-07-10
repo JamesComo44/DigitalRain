@@ -165,7 +165,9 @@ namespace DigitalRain
 
         private void DrawRaindrop(IRaindrop raindrop)
         {
-            _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, raindrop.Position, raindrop.Color);
+            var coordinates = raindrop.Coordinates;
+            var position = new Vector2(coordinates.ColumnNumber * _columnPool.ColumnWidth, coordinates.RowNumber * _currentFontHeight);
+            _spriteBatch.DrawString(_raindropFont, raindrop.Symbol, position, raindrop.Color);
         }
     }
 }

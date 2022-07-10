@@ -59,7 +59,7 @@ namespace DigitalRain.Raindrops
         {
             while (ThereIsRoomLeftToFall)
             {
-                var raindrop = _raindropFactory.Create(new GridCoordinates(_raindropCount, _column.Number), _column.Width, _fontHeight);
+                var raindrop = _raindropFactory.Create(new GridCoordinates(_raindropCount, _column.Number));
                 _raindrops.Add(raindrop);
                 _raindropCount++;
             }

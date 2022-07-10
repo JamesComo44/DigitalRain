@@ -22,7 +22,7 @@ namespace DigitalRain.Raindrops
             InitializeSymbolPoolsAndLifespans(rowNumber: 7, fixedText: "HELLO WORLD!", fixedLifespan: 120000); // 2 minutes
         }
 
-        public IRaindrop Create(GridCoordinates coordinates, int columnWidth, float symbolHeight)
+        public IRaindrop Create(GridCoordinates coordinates)
         {
             var lifespan = GetLifespan(coordinates);
             var symbolPool = GetSymbolPool(coordinates);
@@ -36,8 +36,7 @@ namespace DigitalRain.Raindrops
                 // TODO: Needs to implement IRaindrop if we want to get it working again.
                 // return new GlitchedRaindrop(coordinates, symbol, lifespan, colorCalculator);
             }
-            var position = new Vector2(coordinates.ColumnNumber * columnWidth, coordinates.RowNumber * symbolHeight);
-            return new StandardRaindrop(position, symbol, lifespan, colorCalculator);
+            return new StandardRaindrop(coordinates, symbol, lifespan, colorCalculator);
         }
 
         private void InitializeSymbolPoolsAndLifespans(int rowNumber, string fixedText, double fixedLifespan)

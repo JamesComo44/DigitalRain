@@ -5,6 +5,6 @@ namespace DigitalRain.Raindrops
 
     public interface IRaindropFactory
     {
-        public IRaindrop Create(GridCoordinates coordinates, int columnWidth, float symbolHeight);
+        public IRaindrop Create(GridCoordinates coordinates);
     }
 }

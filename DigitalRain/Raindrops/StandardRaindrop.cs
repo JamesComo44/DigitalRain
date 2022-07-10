@@ -8,7 +8,7 @@ namespace DigitalRain.Raindrops
 
     public class StandardRaindrop : IRaindrop
     {
-        public Vector2 Position { get; private set; }
+        public GridCoordinates Coordinates { get; private set; }
         public double LifeRemaining { get; private set; }
 
         private readonly ColorCalculator _colorCalculator;
@@ -16,9 +16,9 @@ namespace DigitalRain.Raindrops
         public Color Color { get; private set; }
         public string Symbol { get; private set; }
 
-        public StandardRaindrop(Vector2 position, char symbol, double lifespan, ColorCalculator colorCalculator)
+        public StandardRaindrop(GridCoordinates coordinates, char symbol, double lifespan, ColorCalculator colorCalculator)
         {
-            Position = position;
+            Coordinates = coordinates;
             Symbol = symbol.ToString();
             LifeRemaining = lifespan;
             _colorCalculator = colorCalculator;
