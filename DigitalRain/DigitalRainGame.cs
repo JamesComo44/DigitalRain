@@ -1,14 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Linq;
 
 namespace DigitalRain
 {
-    using Columns;
-    using Raindrops;
-    using System.Collections.Generic;
-    using System.Linq;
+    using Config;
+    using Grid;
+    using Raindrop;
+    using Raindrop.Raindrops;
 
     public class DigitalRainGame : Game
     {

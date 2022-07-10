@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 
-namespace DigitalRain.Columns
+namespace DigitalRain.Grid
 {
     public class GridCoordinates : IEquatable<GridCoordinates>
     {

@@ -1,9 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Config
 {
-    using Columns;
+    using Raindrop;
+    using Raindrop.Raindrops;
+    using Grid;
 
     public class StandardRaindropFactory : IRaindropFactory
     {

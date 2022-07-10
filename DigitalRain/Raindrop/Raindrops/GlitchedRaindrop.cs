@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
+using Microsoft.Xna.Framework;
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Raindrop.Raindrops
 {
-    using Columns;
+    using Grid;
+    using Config;
 
     public class GlitchedRaindrop // TODO : IRaindrop
     {

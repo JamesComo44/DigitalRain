@@ -29,8 +29,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Configs\**">
+    <None Include="Config\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Grid\ColumnNumberPickers\IColumnNumberPicker.cs" />
   </ItemGroup>
 </Project>

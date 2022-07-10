@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Raindrop
 {
     static class SymbolPools
     {

@@ -2,9 +2,12 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Raindrop
 {
-    using Columns;
+    using Config;
+    using GameUtilities;
+    using Grid;
+    using Raindrop.Raindrops;
     using System.Collections;
 
     public class RaindropStream : IModelObject, IEnumerable<IRaindrop>

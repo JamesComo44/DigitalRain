@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace DigitalRain.Raindrops
+namespace DigitalRain.Raindrop.Raindrops
 {
-    using Columns;
+    using Grid;
+    using Config;
 
     public class StandardRaindrop : IRaindrop
     {

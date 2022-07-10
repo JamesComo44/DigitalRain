@@ -2,6 +2,8 @@
 
 namespace DigitalRain
 {
+    using Config;
+
     public static class Program
     {
         [STAThread]
