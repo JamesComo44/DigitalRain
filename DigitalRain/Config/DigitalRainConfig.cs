@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+
+using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace DigitalRain.Config
 {
@@ -50,9 +52,8 @@ namespace DigitalRain.Config
         public StandardRaindropFactoryConfig standardRaindropFactory;
     }
 
-    public class DebugConfigEditor
+    public class DebugConfigEditor : IInputHandler
     {
-        public bool IsActive { get; private set; }
         public bool IsEditing { get; private set; }
 
         private readonly List<List<FieldInfo>> _editableConfigs;
@@ -72,7 +73,6 @@ namespace DigitalRain.Config
         {
             _graphicsDevice = graphics;
 
-            IsActive = false;
             IsEditing = false;
 
             Type digitalRainConfigType = DigitalRainGame.Config.GetType();
@@ -103,27 +103,39 @@ namespace DigitalRain.Config
             _editValue = GetEditValue();
         }
 
-        public void ToggleActiveMode()
+        public void EnterInputMode()
         {
-            IsActive = !IsActive;
+            LoadTextures();
+        }
 
-            if (IsActive)
-                LoadTextures();
-            else
-                UnloadTextures();
+        public void LeaveInputMode()
+        {
+            UnloadTextures();
+        }
+
+        public void HandleInput(InputController inputController)
+        {
+            if (inputController.WasKeyPressed(Keys.Enter))
+            {
+                ToggleEditingMode();
+            }
+            if (inputController.WasKeyPressed(Keys.Up))
+            {
+                IncrementTargetIndex();
+            }
+            if (inputController.WasKeyPressed(Keys.Down))
+            {
+                DecrementTargetIndex();
+            }
         }
 
         public void ToggleEditingMode()
         {
-            if (IsActive)
-                IsEditing = !IsEditing;
+            IsEditing = !IsEditing;
         }
 
         public void IncrementTargetIndex()
         {
-            if (!IsActive)
-                return;
-
             if (IsEditing)
                 _editIndex++;
             else
@@ -141,9 +153,6 @@ namespace DigitalRain.Config
 
         public void DecrementTargetIndex()
         {
-            if (!IsActive)
-                return;
-
             if (IsEditing)
                 _editIndex--;
             else
@@ -206,9 +215,6 @@ namespace DigitalRain.Config
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
-            if (!IsActive)
-                return;
-
             if (IsEditing)
             {
                 string header = "Edit Config Value";
