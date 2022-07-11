@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.Xna.Framework;
@@ -11,11 +12,65 @@ namespace DigitalRain
     using Grid;
     using Raindrop;
     using Raindrop.Raindrops;
+    using InputHandlers;
+
+    internal enum GameMode
+    {
+        EnterFixedTextMode,
+        DebugConfigEditorMode
+    }
+
+    internal class AbortGameException : Exception
+    {
+        public AbortGameException(string message) : base(message) { }
+    }
+
+    public class InputController
+    {
+        private KeyboardState _currentKeyboardState;
+        private KeyboardState _previousKeyboardState;
+
+        public InputController()
+        {
+            // "Prime" ourselves so both keyboard state variables have something valid.
+            UpdateKeyboardState();
+            UpdateKeyboardState();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            UpdateKeyboardState();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || WasKeyPressed(Keys.Escape))
+            {
+                throw new AbortGameException("Bye!");
+            }
+        }
+
+        public bool WasKeyPressed(Keys key)
+        {
+            return (Keyboard.GetState().IsKeyDown(key) && !_previousKeyboardState.IsKeyDown(key));
+        }
+
+        private void UpdateKeyboardState()
+        {
+            _previousKeyboardState = _currentKeyboardState;
+            _currentKeyboardState = Keyboard.GetState();
+        }
+    }
+
+    internal class DummyInputHandler : IInputHandler
+    {
+        public void EnterInputMode() { }
+        public void LeaveInputMode() { }
+        public void HandleInput(InputController inputController) { }
+
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font) { }
+    }
 
     public class DigitalRainGame : Game
     {
         public static DigitalRainConfig Config;
-        public static DebugConfigEditor ConfigDebugEdit;
 
         private GraphicsDeviceManager _graphics;
         private Rectangle _screenBounds;
@@ -25,10 +80,16 @@ namespace DigitalRain
 
         private StreamSpawnerConfig _config;
         private UnoccupiedColumnPool _columnPool;
-        private RaindropStreamFactory _streamFactory;
-        private List<RaindropStream> _raindropStreams;
+        public RaindropStreamFactory StreamFactory { get; private set; }
+        public List<RaindropStream> RaindropStreams { get; private set; }
         private double _lastRaindropStreamCreationTimeInSeconds;
         private float _currentFontHeight;
+
+        private InputController _inputController;
+        private GameMode _currentMode;
+        private IInputHandler _currentInputHandler;
+        private static DebugConfigEditor _configDebugEdit;
+        private static RotateColorInputHandler _fixedTextInputHandler;
 
         public DigitalRainGame(DigitalRainConfig config)
         {
@@ -40,18 +101,24 @@ namespace DigitalRain
 
         protected override void Initialize()
         {
-            ConfigDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
-
             _screenBounds = _graphics.GraphicsDevice.Viewport.Bounds;
 
             ConfigurationProfile configProfile = ConfigurationProfile.ConfigurationProfiles[Config.profile];
             _columnPool = new UnoccupiedColumnPool(configProfile.ColumnNumberPicker, _screenBounds);
-            _streamFactory = new RaindropStreamFactory(configProfile.RaindropFactory);
+            StreamFactory = new RaindropStreamFactory(configProfile.RaindropFactory);
 
             _config = Config.streamSpawner;
-            _raindropStreams = new List<RaindropStream>();
+            RaindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
             _currentFontHeight = 0;
+
+            _inputController = new InputController();
+
+            _configDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
+            _fixedTextInputHandler = new RotateColorInputHandler(this);
+            _currentInputHandler = new DummyInputHandler();  // Just needed to make the first transition go smoothly.
+
+            TransitionToMode(GameMode.EnterFixedTextMode);
 
             base.Initialize();
         }
@@ -66,36 +133,63 @@ namespace DigitalRain
 
         protected override void UnloadContent()
         {
-            ConfigDebugEdit.UnloadTextures();
+            _configDebugEdit.UnloadTextures();
             base.UnloadContent();
         }
 
-        KeyboardState previousKeyboardState;
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            try
+            {
+                _inputController.Update(gameTime);
+            }
+            catch (AbortGameException exc)
+            {
                 Exit();
+            }
 
             AddNewRaindropStreams(gameTime);
             RemoveDeadRaindropStreams();
 
-            foreach (var raindropStream in _raindropStreams)
+            foreach (var raindropStream in RaindropStreams)
             {
                 raindropStream.Update(gameTime);
             }
 
-            // In-Game Debug Controls
-            if (WasKeyPressed(Keys.OemTilde))
-                ConfigDebugEdit.ToggleActiveMode();
-            if (WasKeyPressed(Keys.Enter))
-                ConfigDebugEdit.ToggleEditingMode();
-            if (WasKeyPressed(Keys.Up))
-                ConfigDebugEdit.IncrementTargetIndex();
-            if (WasKeyPressed(Keys.Down))
-                ConfigDebugEdit.DecrementTargetIndex();
+            if (_inputController.WasKeyPressed(Keys.OemTilde))
+            {
+                if (_currentMode != GameMode.DebugConfigEditorMode)
+                {
+                    TransitionToMode(GameMode.DebugConfigEditorMode);
+                }
+                else
+                {
+                    TransitionToMode(GameMode.EnterFixedTextMode);
+                }
+            }
+            _currentInputHandler.HandleInput(_inputController);
 
-            previousKeyboardState = Keyboard.GetState();
-            base.Update(gameTime);
+            base.Update(gameTime);            
+        }
+
+        private void TransitionToMode(GameMode toMode)
+        {
+            _currentInputHandler.LeaveInputMode();
+
+            switch(toMode)
+            {
+                case GameMode.DebugConfigEditorMode:
+                    _currentInputHandler = _configDebugEdit;
+                    break;
+                case GameMode.EnterFixedTextMode:
+                    _currentInputHandler = _fixedTextInputHandler;
+                    break;
+                default:
+                    break;
+            }
+
+            _currentMode = toMode;
+            _currentInputHandler.EnterInputMode();
         }
 
         private void AddNewRaindropStreams(GameTime gameTime)
@@ -107,29 +201,24 @@ namespace DigitalRain
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
                     var column = _columnPool.PickOne();
-                    var raindropStream = _streamFactory.Create(column, _currentFontHeight);
-                    _raindropStreams.Add(raindropStream);
+                    var raindropStream = StreamFactory.Create(column, _currentFontHeight);
+                    RaindropStreams.Add(raindropStream);
                 }
             }
         }
 
         private void RemoveDeadRaindropStreams()
         {
-            var columnsToRestore = _raindropStreams
+            var columnsToRestore = RaindropStreams
                 .Where(stream => stream.IsDead)
                 .Select(stream => stream.Column)
                 .ToHashSet();
 
-            _raindropStreams = _raindropStreams
+            RaindropStreams = RaindropStreams
                 .Where(stream => !stream.IsDead)
                 .ToList();
 
             _columnPool.Restore(columnsToRestore);
-        }
-
-        private bool WasKeyPressed(Keys key)
-        {
-            return (Keyboard.GetState().IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key));
         }
 
         protected override void Draw(GameTime gameTime)
@@ -138,7 +227,7 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
-            foreach (var raindropStream in _raindropStreams)
+            foreach (var raindropStream in RaindropStreams)
             {
                 foreach (var raindrop in raindropStream)
                 {
@@ -146,7 +235,8 @@ namespace DigitalRain
                 }
             }
 
-            ConfigDebugEdit.Draw(_spriteBatch, _debugFont);
+            // TODO:  Input Handler probable shouldn't know how to Draw()
+            _currentInputHandler.Draw(_spriteBatch, _debugFont);
             _spriteBatch.End();
 
             base.Draw(gameTime);

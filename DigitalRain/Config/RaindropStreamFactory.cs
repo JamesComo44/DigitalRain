@@ -10,12 +10,12 @@ namespace DigitalRain.Config
         private static readonly Random _randomGen = new Random();
 
         private readonly RaindropStreamFactoryConfig _config;
-        private readonly IRaindropFactory _raindropFactory;
+        public IRaindropFactory RaindropFactory { get; set; }
 
         public RaindropStreamFactory(IRaindropFactory raindropFactory)
         {
             _config = DigitalRainGame.Config.raindropStreamFactory;
-            _raindropFactory = raindropFactory;
+            RaindropFactory = raindropFactory;
         }
 
         public RaindropStream Create(Column column, float fontHeight)
@@ -23,7 +23,7 @@ namespace DigitalRain.Config
             var speedInPixelsPerSecond = _randomGen.Next(
                 _config.streamFallSpeedMin, _config.streamFallSpeedMax + 1);
 
-            return new RaindropStream(column, _raindropFactory, speedInPixelsPerSecond, fontHeight);
+            return new RaindropStream(column, RaindropFactory, speedInPixelsPerSecond, fontHeight);
         }
     }
 }

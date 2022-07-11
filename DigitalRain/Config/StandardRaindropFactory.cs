@@ -7,22 +7,22 @@ namespace DigitalRain.Config
 
     public class StandardRaindropFactory : IRaindropFactory
     {
-        RandomSymbolFactory _symbolFactory;
-        RandomLifespanFactory _lifespanFactory;
-        ColorCalculatorFactory _colorCalculatorFactory;
+        private RandomSymbolFactory _symbolFactory;
+        private RandomLifespanFactory _lifespanFactory;
+        public ColorCalculatorFactory ColorCalculatorFactory { get; private set; }
 
         public StandardRaindropFactory(RandomSymbolFactory symbolFactory, RandomLifespanFactory lifespanFactory, ColorCalculatorFactory colorCalculatorFactory)
         {
             _symbolFactory = symbolFactory;
             _lifespanFactory = lifespanFactory;
-            _colorCalculatorFactory = colorCalculatorFactory;
+            ColorCalculatorFactory = colorCalculatorFactory;
         }
         
         public IRaindrop Create(GridCoordinates coordinates)
         {
             var symbol = _symbolFactory.Create();
             var lifespan = _lifespanFactory.Create();
-            var colorCalculator = _colorCalculatorFactory.Create(timespan: lifespan);
+            var colorCalculator = ColorCalculatorFactory.Create(timespan: lifespan);
             return new StandardRaindrop(coordinates, symbol, lifespan, colorCalculator);
         }
     }

@@ -15,6 +15,8 @@ namespace DigitalRain.Config
         private readonly Dictionary<GridCoordinates, char[]> _symbolPools;
         private readonly Dictionary<GridCoordinates, double> _lifespans;
 
+        public ColorCalculatorFactory ColorCalculatorFactory { get; private set; }
+
         public PerGridCoordinateRaindropFactory()
         {
             _config = DigitalRainGame.Config.standardRaindropFactory;
@@ -22,6 +24,9 @@ namespace DigitalRain.Config
             _symbolPools = new Dictionary<GridCoordinates, char[]>();
             _lifespans = new Dictionary<GridCoordinates, double>();
             InitializeSymbolPoolsAndLifespans(rowNumber: 7, fixedText: "HELLO WORLD!", fixedLifespan: 120000); // 2 minutes
+
+            ColorCalculatorFactory = new ColorCalculatorFactory(
+                startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
         }
 
         public IRaindrop Create(GridCoordinates coordinates)
@@ -29,8 +34,7 @@ namespace DigitalRain.Config
             var lifespan = GetLifespan(coordinates);
             var symbolPool = GetSymbolPool(coordinates);
             var symbol = GetSymbolFromPool(symbolPool);
-            var colorCalculator = new ColorCalculator(
-                timespan: lifespan, startColor: Color.White, endColor: Color.GreenYellow, lerpTime: 400);
+            var colorCalculator = ColorCalculatorFactory.Create(lifespan);
 
             var glitchChance = 0.07;
             if (_randomGen.NextDouble() < glitchChance)

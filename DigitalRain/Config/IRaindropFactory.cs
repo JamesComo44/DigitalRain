@@ -7,5 +7,6 @@ namespace DigitalRain.Config
     public interface IRaindropFactory
     {
         public IRaindrop Create(GridCoordinates coordinates);
+        public ColorCalculatorFactory ColorCalculatorFactory { get; }
     }
 }
