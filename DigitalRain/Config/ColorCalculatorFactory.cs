@@ -7,19 +7,19 @@ namespace DigitalRain.Config
     public class ColorCalculatorFactory
     {
         private readonly Color _startColor;
-        private readonly Color _endColor;
-        private readonly float _lerpTime;
+        public Color EndColor { get; private set; }
+        public float LerpTime { get; private set; }
 
         public ColorCalculatorFactory(Color startColor, Color endColor, float lerpTime)
         {
             _startColor = startColor;
-            _endColor = endColor;
-            _lerpTime = lerpTime;
+            EndColor = endColor;
+            LerpTime = lerpTime;
         }
 
         public ColorCalculator Create(double timespan)
         {
-            return new ColorCalculator(timespan, _startColor, _endColor, _lerpTime);
+            return new ColorCalculator(timespan, _startColor, EndColor, LerpTime);
         }
     }
 }

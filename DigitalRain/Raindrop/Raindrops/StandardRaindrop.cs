@@ -9,27 +9,29 @@ namespace DigitalRain.Raindrop.Raindrops
     public class StandardRaindrop : IRaindrop
     {
         public GridCoordinates Coordinates { get; private set; }
-        public double LifeRemaining { get; private set; }
+        public double Lifespan { get; private set; }
+        private double _lifeRemaining;
 
-        private readonly ColorCalculator _colorCalculator;
+        public ColorCalculator ColorCalculator { get; set; }
 
         public Color Color { get; private set; }
-        public string Symbol { get; private set; }
+        public string Symbol { get; set; }
 
         public StandardRaindrop(GridCoordinates coordinates, char symbol, double lifespan, ColorCalculator colorCalculator)
         {
             Coordinates = coordinates;
             Symbol = symbol.ToString();
-            LifeRemaining = lifespan;
-            _colorCalculator = colorCalculator;
-            Color = _colorCalculator.StartColor;
+            Lifespan = lifespan;
+            _lifeRemaining = Lifespan;
+            ColorCalculator = colorCalculator;
+            Color = ColorCalculator.StartColor;
         }
 
         public bool IsDead
         {
             get
             {
-                return LifeRemaining <= 0;
+                return _lifeRemaining <= 0;
             }
         }
 
@@ -37,8 +39,8 @@ namespace DigitalRain.Raindrop.Raindrops
         {
             if (!IsDead)
             {
-                LifeRemaining = (float)Math.Max(LifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds, 0);
-                Color = _colorCalculator.Calculate(LifeRemaining);
+                _lifeRemaining = (float)Math.Max(_lifeRemaining - gameTime.ElapsedGameTime.TotalMilliseconds, 0);
+                Color = ColorCalculator.Calculate(_lifeRemaining);
             }
         }
     }

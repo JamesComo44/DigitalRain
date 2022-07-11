@@ -12,19 +12,19 @@ namespace DigitalRain.Raindrop
 
     public class RaindropStream : IModelObject, IEnumerable<IRaindrop>
     {
-        private readonly IRaindropFactory _raindropFactory;
+        public IRaindropFactory RaindropFactory { get; set; }
         public Column Column { get; private set; }
         private readonly float _fontHeight;
         private double _lifeSoFarInSeconds;
         private readonly float _speedInPixelsPerSecond;
         private double _distanceFallenInPixels;
         private int _raindropCount;
-        private List<IRaindrop> _raindrops;
+        public List<IRaindrop> _raindrops;
 
         public RaindropStream(Column column, IRaindropFactory raindropFactory, float speedInPixelsPerSecond, float fontHeight)
         {
             Column = column;
-            _raindropFactory = raindropFactory;
+            RaindropFactory = raindropFactory;
             _fontHeight = fontHeight;
             _speedInPixelsPerSecond = speedInPixelsPerSecond;
             _raindrops = new List<IRaindrop>();
@@ -58,7 +58,7 @@ namespace DigitalRain.Raindrop
             var nextSymbolPositionY = StreamHeight;
             while (nextSymbolPositionY < _distanceFallenInPixels)
             {
-                var raindrop = _raindropFactory.Create(new GridCoordinates(_raindropCount, Column.Number));
+                var raindrop = RaindropFactory.Create(new GridCoordinates(_raindropCount, Column.Number));
                 _raindrops.Add(raindrop);
                 _raindropCount++;
                 nextSymbolPositionY += SymbolHeight;

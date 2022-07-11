@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,14 +12,15 @@ namespace DigitalRain
     using Grid;
     using Raindrop;
     using Raindrop.Raindrops;
+    using InputHandlers;
 
-    public enum GameMode
+    internal enum GameMode
     {
         EnterFixedTextMode,
         DebugConfigEditorMode
     }
 
-    public class AbortGameException : Exception
+    internal class AbortGameException : Exception
     {
         public AbortGameException(string message) : base(message) { }
     }
@@ -59,66 +59,11 @@ namespace DigitalRain
         }
     }
 
-    public interface IInputHandler
-    {
-        public void EnterInputMode();
-        public void LeaveInputMode();
-        public void HandleInput(InputController inputController);
-
-        // TODO: This probably shouldn't be here.
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font);
-    }
-
-    public class DummyInputHandler : IInputHandler
+    internal class DummyInputHandler : IInputHandler
     {
         public void EnterInputMode() { }
         public void LeaveInputMode() { }
         public void HandleInput(InputController inputController) { }
-
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font) { }
-    }
-
-    public class RotateColorInputHandler : IInputHandler
-    {
-        int _currentIndex = 0;
-        List<IRaindropFactory> _raindropFactories = new List<IRaindropFactory>
-        {
-            ConfigurationProfile.RaindropFactories["randomgreen"],
-            ConfigurationProfile.RaindropFactories["randompink"],
-            ConfigurationProfile.RaindropFactories["randomred"]
-        };
-        private RaindropStreamFactory _streamFactory;
-
-        public RotateColorInputHandler(RaindropStreamFactory streamFactory)
-        {
-            _streamFactory = streamFactory;
-            SetRaindropFactory();
-        }
-
-        public void EnterInputMode()
-        {
-            Debug.WriteLine("Entered FixedTextInputHandler mode");
-        }
-
-        public void LeaveInputMode()
-        {
-            Debug.WriteLine("Leave FixedTextInputHandler mode");
-        }
-
-        public void HandleInput(InputController inputController)
-        {
-            if (inputController.WasKeyPressed(Keys.Space))
-            {
-                _currentIndex = (_currentIndex + 1) % _raindropFactories.Count;
-                SetRaindropFactory();
-            }
-        }
-
-        private void SetRaindropFactory()
-        {
-            var raindropFactory = _raindropFactories[_currentIndex];
-            _streamFactory.SetRaindropFactory(raindropFactory);
-        }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font) { }
     }
@@ -135,8 +80,8 @@ namespace DigitalRain
 
         private StreamSpawnerConfig _config;
         private UnoccupiedColumnPool _columnPool;
-        private RaindropStreamFactory _streamFactory;
-        private List<RaindropStream> _raindropStreams;
+        public RaindropStreamFactory StreamFactory { get; private set; }
+        public List<RaindropStream> RaindropStreams { get; private set; }
         private double _lastRaindropStreamCreationTimeInSeconds;
         private float _currentFontHeight;
 
@@ -160,17 +105,17 @@ namespace DigitalRain
 
             ConfigurationProfile configProfile = ConfigurationProfile.ConfigurationProfiles[Config.profile];
             _columnPool = new UnoccupiedColumnPool(configProfile.ColumnNumberPicker, _screenBounds);
-            _streamFactory = new RaindropStreamFactory(configProfile.RaindropFactory);
+            StreamFactory = new RaindropStreamFactory(configProfile.RaindropFactory);
 
             _config = Config.streamSpawner;
-            _raindropStreams = new List<RaindropStream>();
+            RaindropStreams = new List<RaindropStream>();
             _lastRaindropStreamCreationTimeInSeconds = 0;
             _currentFontHeight = 0;
 
             _inputController = new InputController();
 
             _configDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
-            _fixedTextInputHandler = new RotateColorInputHandler(_streamFactory);
+            _fixedTextInputHandler = new RotateColorInputHandler(this);
             _currentInputHandler = new DummyInputHandler();  // Just needed to make the first transition go smoothly.
 
             TransitionToMode(GameMode.EnterFixedTextMode);
@@ -206,7 +151,7 @@ namespace DigitalRain
             AddNewRaindropStreams(gameTime);
             RemoveDeadRaindropStreams();
 
-            foreach (var raindropStream in _raindropStreams)
+            foreach (var raindropStream in RaindropStreams)
             {
                 raindropStream.Update(gameTime);
             }
@@ -256,20 +201,20 @@ namespace DigitalRain
                 {
                     _lastRaindropStreamCreationTimeInSeconds = gameTime.TotalGameTime.TotalSeconds;
                     var column = _columnPool.PickOne();
-                    var raindropStream = _streamFactory.Create(column, _currentFontHeight);
-                    _raindropStreams.Add(raindropStream);
+                    var raindropStream = StreamFactory.Create(column, _currentFontHeight);
+                    RaindropStreams.Add(raindropStream);
                 }
             }
         }
 
         private void RemoveDeadRaindropStreams()
         {
-            var columnsToRestore = _raindropStreams
+            var columnsToRestore = RaindropStreams
                 .Where(stream => stream.IsDead)
                 .Select(stream => stream.Column)
                 .ToHashSet();
 
-            _raindropStreams = _raindropStreams
+            RaindropStreams = RaindropStreams
                 .Where(stream => !stream.IsDead)
                 .ToList();
 
@@ -282,7 +227,7 @@ namespace DigitalRain
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
-            foreach (var raindropStream in _raindropStreams)
+            foreach (var raindropStream in RaindropStreams)
             {
                 foreach (var raindrop in raindropStream)
                 {
