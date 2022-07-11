@@ -78,8 +78,23 @@ namespace DigitalRain
         public void Draw(SpriteBatch spriteBatch, SpriteFont font) { }
     }
 
-    public class FixedTextInputHandler : IInputHandler
+    public class RotateColorInputHandler : IInputHandler
     {
+        int _currentIndex = 0;
+        List<IRaindropFactory> _raindropFactories = new List<IRaindropFactory>
+        {
+            ConfigurationProfile.RaindropFactories["randomgreen"],
+            ConfigurationProfile.RaindropFactories["randompink"],
+            ConfigurationProfile.RaindropFactories["randomred"]
+        };
+        private RaindropStreamFactory _streamFactory;
+
+        public RotateColorInputHandler(RaindropStreamFactory streamFactory)
+        {
+            _streamFactory = streamFactory;
+            SetRaindropFactory();
+        }
+
         public void EnterInputMode()
         {
             Debug.WriteLine("Entered FixedTextInputHandler mode");
@@ -94,8 +109,15 @@ namespace DigitalRain
         {
             if (inputController.WasKeyPressed(Keys.Space))
             {
-                
+                _currentIndex = (_currentIndex + 1) % _raindropFactories.Count;
+                SetRaindropFactory();
             }
+        }
+
+        private void SetRaindropFactory()
+        {
+            var raindropFactory = _raindropFactories[_currentIndex];
+            _streamFactory.SetRaindropFactory(raindropFactory);
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font) { }
@@ -122,7 +144,7 @@ namespace DigitalRain
         private GameMode _currentMode;
         private IInputHandler _currentInputHandler;
         private static DebugConfigEditor _configDebugEdit;
-        private static FixedTextInputHandler _fixedTextInputHandler;
+        private static RotateColorInputHandler _fixedTextInputHandler;
 
         public DigitalRainGame(DigitalRainConfig config)
         {
@@ -148,7 +170,7 @@ namespace DigitalRain
             _inputController = new InputController();
 
             _configDebugEdit = new DebugConfigEditor(_graphics.GraphicsDevice);
-            _fixedTextInputHandler = new FixedTextInputHandler();
+            _fixedTextInputHandler = new RotateColorInputHandler(_streamFactory);
             _currentInputHandler = new DummyInputHandler();  // Just needed to make the first transition go smoothly.
 
             TransitionToMode(GameMode.EnterFixedTextMode);

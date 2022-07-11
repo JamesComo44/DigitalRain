@@ -11,7 +11,7 @@ namespace DigitalRain.Config
 
     public class ConfigurationProfile
     {
-        private static Dictionary<string, IColumnNumberPicker> _columnNumberPickerConfigurers = new Dictionary<string, IColumnNumberPicker>
+        private static Dictionary<string, IColumnNumberPicker> _columnNumberPickers = new Dictionary<string, IColumnNumberPicker>
         {
             { "random", new RandomColumnNumberPicker(columnCount: 50, lowWaterMark: 10) },
             { "roundrobin", new RoundRobinColumnNumberPicker(columnCount: 50) }
@@ -30,6 +30,13 @@ namespace DigitalRain.Config
                 "jamescomopink", new ColorCalculatorFactory(
                     startColor: Color.White,
                     endColor: HexColor("FF1694"),
+                    lerpTime: 400
+                )
+            },
+            {
+                "red", new ColorCalculatorFactory(
+                    startColor: Color.White,
+                    endColor: Color.Red,
                     lerpTime: 400
                 )
             },
@@ -58,10 +65,10 @@ namespace DigitalRain.Config
             }
         };
 
-        private static Dictionary<string, IRaindropFactory> _raindropFactoryConfigurers = new Dictionary<string, IRaindropFactory>
+        public static readonly Dictionary<string, IRaindropFactory> RaindropFactories = new Dictionary<string, IRaindropFactory>
         {
             {
-                "random", new StandardRaindropFactory(
+                "randomgreen", new StandardRaindropFactory(
                     symbolFactory: _symbolFactories["randomalphabet"],
                     lifespanFactory: _lifespanFactories["random"],
                     colorCalculatorFactory: _colorCalculatorFactories["matrixgreen"]
@@ -72,6 +79,13 @@ namespace DigitalRain.Config
                     symbolFactory: _symbolFactories["randomalphabet"],
                     lifespanFactory: _lifespanFactories["random"],
                     colorCalculatorFactory: _colorCalculatorFactories["jamescomopink"]
+                )
+            },
+            {
+                "randomred", new StandardRaindropFactory(
+                    symbolFactory: _symbolFactories["randomalphabet"],
+                    lifespanFactory: _lifespanFactories["random"],
+                    colorCalculatorFactory: _colorCalculatorFactories["red"]
                 )
             },
             {
@@ -90,28 +104,28 @@ namespace DigitalRain.Config
         {
             // Profile 0
             new ConfigurationProfile(
-                _columnNumberPickerConfigurers["random"],
-                _raindropFactoryConfigurers["random"]    
+                _columnNumberPickers["random"],
+                RaindropFactories["randomgreen"]    
             ),
             // Profile 1
             new ConfigurationProfile(
-                _columnNumberPickerConfigurers["random"],
-                _raindropFactoryConfigurers["helloworld"]
+                _columnNumberPickers["random"],
+                RaindropFactories["helloworld"]
             ),
             // Profile 2
             new ConfigurationProfile(
-                _columnNumberPickerConfigurers["roundrobin"],
-                _raindropFactoryConfigurers["helloworld"]
+                _columnNumberPickers["roundrobin"],
+                RaindropFactories["helloworld"]
             ),
             // Profile 3
             new ConfigurationProfile(
-                _columnNumberPickerConfigurers["random"],
-                _raindropFactoryConfigurers["randompink"]
+                _columnNumberPickers["random"],
+                RaindropFactories["randompink"]
             ),
             // Profile 4
             new ConfigurationProfile(
-                _columnNumberPickerConfigurers["random"],
-                _raindropFactoryConfigurers["randomxmas"]
+                _columnNumberPickers["random"],
+                RaindropFactories["randomxmas"]
             )
         };
 

@@ -10,11 +10,16 @@ namespace DigitalRain.Config
         private static readonly Random _randomGen = new Random();
 
         private readonly RaindropStreamFactoryConfig _config;
-        private readonly IRaindropFactory _raindropFactory;
+        private IRaindropFactory _raindropFactory;
 
         public RaindropStreamFactory(IRaindropFactory raindropFactory)
         {
             _config = DigitalRainGame.Config.raindropStreamFactory;
+            SetRaindropFactory(raindropFactory);
+        }
+
+        public void SetRaindropFactory(IRaindropFactory raindropFactory)
+        {
             _raindropFactory = raindropFactory;
         }
 
