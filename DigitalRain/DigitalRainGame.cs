@@ -92,7 +92,10 @@ namespace DigitalRain
 
         public void HandleInput(InputController inputController)
         {
-            Debug.WriteLine("FixedTextInputHandler handled input");
+            if (inputController.WasKeyPressed(Keys.Space))
+            {
+                
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font) { }
